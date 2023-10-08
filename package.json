@@ -1,0 +1,26 @@
+{
+  "name": "mocaccino",
+  "version": "1.0.0",
+  "description": "Fully compatible Express specification running with Bun",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "lint": "standard",
+    "lint:fix": "standard --fix",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cookie-session": "^2.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "helmet": "^7.0.0",
+    "mime-db": "^1.52.0"
+  },
+  "devDependencies": {
+    "standard": "^17.1.0"
+  }
+}
