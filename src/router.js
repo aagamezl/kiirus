@@ -1,4 +1,6 @@
-import response from './response.js'
+// import response from './response.js'
+import Response from './response.js'
+// import createResponse from './response.js'
 
 /**
  * Create an Express Router object.
@@ -83,40 +85,18 @@ const createRouter = () => {
 
   const handleRequest = (req, res, next) => {
     const { method, url } = req
-    // const { url } = request
 
     // Find route matching the request
-    // const route = routes.find(r => {
-    //   const routePathSegments = r.path.split('/')
-    //   const requestPathSegments = url.split('/')
-
-    //   if (routePathSegments.length !== requestPathSegments.length) {
-    //     return false
-    //   }
-
-    //   for (let i = 0; i < routePathSegments.length; i++) {
-    //     if (routePathSegments[i].startsWith(':')) {
-    //       request.params[routePathSegments[i].slice(1)] = requestPathSegments[i]
-    //     } else if (routePathSegments[i] !== requestPathSegments[i]) {
-    //       return false
-    //     }
-    //   }
-
-    //   return true
-    // })
-    // const route = routes.find(r => r.path === url && r.method === method)
-
-    // Find route matching the request
-    const route = routes.find(r => {
-      // const routePath = r.path
-      // const routeRegex = new RegExp(`^${routePath.replace(/:[^/]+/g, '([\\w-]+)')}$`)
-      const routeRegex = new RegExp(`^${r.path.replace(/:[^/]+/g, '([\\w-]+)')}$`)
-      return routeRegex.test(url) && r.method === method
+    // TODO: Change this .find to a traditional for
+    const route = routes.find(route => {
+      const routeRegex = new RegExp(`^${route.path.replace(/:[^/]+/g, '([\\w-]+)')}$`)
+      return route.method === method && routeRegex.test(url)
     })
 
     if (!route) {
       res.statusCode = 404
       res.end('Not Found')
+
       return
     }
 
@@ -125,10 +105,10 @@ const createRouter = () => {
     const urlParts = url.split('/')
     const routeParts = route.path.split('/')
 
-    for (let i = 0; i < routeParts.length; i++) {
+    for (let i = 0, length = routeParts.length; i < length; i++) {
       if (routeParts[i].startsWith(':')) {
-        const paramName = routeParts[i].slice(1)
-        params[paramName] = urlParts[i]
+        // const paramName = routeParts[i].slice(1)
+        params[routeParts[i].slice(1)] = urlParts[i]
       }
     }
 
@@ -144,10 +124,13 @@ const createRouter = () => {
         req.params = params
         // handler(req, res, routeNext)
 
-        Object.setPrototypeOf(response, res)
+        // Object.setPrototypeOf(response, res)
 
         // handler(req, Object.setPrototypeOf({ ...res, ...response }, Object.getPrototypeOf(res)), routeNext)
-        handler(req, response, routeNext)
+        // handler(req, response, routeNext)
+
+        // handler(req, createResponse(req), routeNext)
+        handler(req, new Response(req), routeNext)
       }
     }
 

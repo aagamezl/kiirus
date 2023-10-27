@@ -7,7 +7,17 @@ import mocaccino from './src/mocaccino.js'
 const app = mocaccino()
 const port = 3000
 
-app.use(mocaccino.json())
+// app.use(mocaccino.json())
+
+// app.use(helmet({
+//   contentSecurityPolicy: false,
+//   xDownloadOptions: true
+// }))
+
+// app.use(cors({
+//   origin: 'http://example.com',
+//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+// }))
 
 // Application-level middleware
 app.use((req, res, next) => {
@@ -28,24 +38,15 @@ router.get('/', routeMiddleware, (req, res) => {
   res.end('Hello, World!')
 })
 
-router.post('/users', (req, res) => {
-  res.status(201).send(req.body)
-})
+// router.post('/users', (req, res) => {
+//   res.status(201).send(req.body)
+// })
 
 router.get('/users/:userId/books/:bookId', (req, res) => {
   console.log(req.params)
-  res.end()
+  // res.end()
+  res.json({ message: 'Hello, World!' })
 })
-
-// app.use(helmet({
-//   contentSecurityPolicy: false,
-//   xDownloadOptions: true
-// }))
-
-// app.use(cors({
-//   origin: 'http://example.com',
-//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-// }))
 
 const expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 app.use(session({
