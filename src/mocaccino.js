@@ -82,12 +82,13 @@ const mocaccino = () => {
  * @param {object} [options] - Options for JSON parsing middleware.
  * @returns {function} JSON parsing middleware.
  */
-mocaccino.json = () => {
+mocaccino.json = (options) => {
   return (req, res, next) => {
     // Check if there is data in the request body based on the Content-Length header
     const contentLength = (req.headers['content-length'] ?? '0') | 0
+    const [contentType] = req.headers['content-type'].split(';')
 
-    if (contentLength > 0) {
+    if (contentType === 'application/json' && contentLength > 0) {
       const bodyBuffer = []
 
       req.on('data', (chunk) => {
@@ -95,46 +96,50 @@ mocaccino.json = () => {
       })
 
       req.on('end', () => {
-        if (req.headers['content-type'] !== undefined) {
-          const [contentType] = req.headers['content-type'].split(';')
+        req.body = JSON.parse(Buffer.concat(bodyBuffer).toString())
 
-          switch (contentType) {
-            case 'application/json':
-              req.body = JSON.parse(Buffer.concat(bodyBuffer).toString())
+        next()
+      })
+    } else {
+      next()
+    }
+  }
+}
 
-            // case 'application/x-www-form-urlencoded':
-            //   return callback(urlEncoded(Buffer.concat(bodyBuffer)))
+/**
+ * Built-in middleware in Mocaccino.js. The main objective of this method is to
+ * parse the incoming request with urlencoded payloads and is based upon the.
+ *
+ * This method returns the middleware that parses all the urlencoded bodies.
+ *
+ * @param {*} options
+ * @returns {function} x-www-form-urlencoded parsing middleware.
+ */
+mocaccino.urlencoded = (options) => {
+  return (req, res, next) => {
+    // Check if there is data in the request body based on the Content-Length header
+    const contentLength = (req.headers['content-length'] ?? '0') | 0
+    const [contentType] = req.headers['content-type'].split(';')
 
-            // case 'multipart/form-data':
-            //   return callback(formData(Buffer.concat(bodyBuffer), getBoundary(req.headers['content-type'])))
+    if (contentType === 'application/x-www-form-urlencoded' && contentLength > 0) {
+      const bodyBuffer = []
 
-            // default:
-            //   return callback(Buffer.concat(bodyBuffer))
-          }
-
-          next()
-        }
-
-        // return callback(Buffer.concat(bodyBuffer))
+      req.on('data', (chunk) => {
+        bodyBuffer.push(chunk)
       })
 
-      // Create a Transform stream to accumulate the request body
-      // const requestBodyStream = new Transform({
-      //   transform (chunk, encoding, callback) {
-      //     this.push(chunk)
-      //     callback()
-      //   }
-      // })
+      req.on('end', () => {
+        req.body = decodeURIComponent(Buffer.concat(bodyBuffer).toString())
+          .split('&')
+          .reduce((formData, pair) => {
+            const [key, value] = pair.split('=')
+            formData[decodeURIComponent(key)] = decodeURIComponent(value)
 
-      // // Read and parse the request body
-      // req.pipe(requestBodyStream)
+            return formData
+          }, {})
 
-      // requestBodyStream.on('end', () => {
-      //   req.body = requestBodyStream.read()
-
-      //   // Start executing middleware chain
-      //   next()
-      // })
+        next()
+      })
     } else {
       next()
     }

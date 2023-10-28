@@ -7,7 +7,8 @@ import mocaccino from './src/mocaccino.js'
 const app = mocaccino()
 const port = 3000
 
-// app.use(mocaccino.json())
+app.use(mocaccino.urlencoded())
+app.use(mocaccino.json())
 
 // app.use(helmet({
 //   contentSecurityPolicy: false,
@@ -38,9 +39,9 @@ router.get('/', routeMiddleware, (req, res) => {
   res.end('Hello, World!')
 })
 
-// router.post('/users', (req, res) => {
-//   res.status(201).send(req.body)
-// })
+router.post('/users', (req, res) => {
+  res.status(201).send(req.body)
+})
 
 router.get('/users/:userId/books/:bookId', (req, res) => {
   console.log(req.params)

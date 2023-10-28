@@ -4,11 +4,8 @@ import { getCharset, getContentType } from './utils/getContentType.js'
 
 const charsetRegExp = /;\s*charset\s*=/
 
-const setCharset = (contentType, charset) => {
-  return `${contentType}; ${charset}`
-}
-
 const CONTENT_TYPE = {
+  HTML: 'text/html; charset=utf-8',
   JSON: 'application/json; charset=utf-8',
   PLAIN: 'text/plain; charset=utf-8',
   OCTET: 'application/octet-stream'
@@ -39,11 +36,12 @@ class Response extends ServerResponse {
    * Send a JSON response
    * @function
    * @param {object} [body] - The JSON data to send in the response
+   * @param {string} [contentType] - The JSON content type in the response
    * @returns {object} The Express Response object.
    */
-  json (body) {
-    if (!this.get('Content-Type')) {
-      this.set('Content-Type', CONTENT_TYPE.JSON)
+  json (body, contentType) {
+    if (!contentType) {
+      this.setHeader('Content-Type', CONTENT_TYPE.JSON)
     }
 
     return this.end(JSON.stringify(body))
@@ -52,10 +50,10 @@ class Response extends ServerResponse {
   /**
    * Send a response
    * @function
-   * @param {string|Buffer|object} [body] - The data to send in the response
+   * @param {string|number|object|Buffer|ArrayBuffer} [payload] - The data to send in the response
    */
-  send (body) {
-    // let encoding
+  send (payload) {
+    const contentType = this.getHeader('Content-Type')
 
     if (this.req.method === 'HEAD') {
       // skip body for HEAD
@@ -64,14 +62,10 @@ class Response extends ServerResponse {
       return this
     }
 
-    switch (typeof body) {
+    switch (typeof payload) {
       // string defaulting to html
       case 'string': {
-        // encoding = 'utf8'
-        // const contentType = this.get('Content-Type') ?? 'html'
-
-        // this.set('Content-Type', setCharset(contentType, encoding))
-        this.set('Content-Type', setCharset(this.get('Content-Type') ?? 'html', 'utf8'))
+        this.setHeader('Content-Type', contentType ?? CONTENT_TYPE.HTML)
 
         break
       }
@@ -79,51 +73,35 @@ class Response extends ServerResponse {
       case 'boolean':
       case 'number':
       case 'object':
-        if (body === null) {
-          body = ''
-        } else if (Buffer.isBuffer(body)) {
-          if (!this.get('Content-Type')) {
-            this.type('bin')
+        if (Buffer.isBuffer(payload)) {
+          if (!contentType) {
+            this.setHeader('Content-Type', CONTENT_TYPE.OCTET)
           }
         } else {
-          return this.json(body)
+          return this.json(payload, contentType)
         }
 
         break
     }
 
-    // determine if ETag should be generated
-    // const etagFn = app.get('etag fn')
-    // const generateETag = !this.get('ETag') && typeof etagFn === 'function'
+    if (payload !== undefined) {
+      // populate Content-Length
+      let length
 
-    // populate Content-Length
-    let len
-    if (body !== undefined) {
-      if (Buffer.isBuffer(body)) {
+      if (Buffer.isBuffer(payload)) {
         // get length of Buffer
-        len = body.length
-      } else if (/* !generateETag && */ body.length < 1000) {
-        // just calculate length when no ETag + small body
-        // len = Buffer.byteLength(body, encoding)
-        // len = Buffer.byteLength(body, 'utf8')
+        length = payload.length
+      } else if (/* !generateETag && */ payload.length < 1000) {
+        // just calculate length when no ETag + small payload
+        // len = Buffer.byteLength(payload, 'utf8')
       } else {
-        // convert body to Buffer and calculate
-        // body = Buffer.from(body, encoding)
-        body = Buffer.from(body, 'utf8')
-        // encoding = undefined
-        len = body.length
+        // convert payload to Buffer and calculate
+        payload = Buffer.from(payload, 'utf8')
+        length = payload.length
       }
 
-      this.set('Content-Length', len)
+      this.setHeader('Content-Length', length)
     }
-
-    // populate ETag
-    // let etag
-    // if (generateETag && len !== undefined) {
-    //   if ((etag = etagFn(chunk, encoding))) {
-    //     this.set('ETag', etag)
-    //   }
-    // }
 
     // freshness
     if (this.req.fresh) {
@@ -135,18 +113,33 @@ class Response extends ServerResponse {
       this.removeHeader('Content-Type')
       this.removeHeader('Content-Length')
       this.removeHeader('Transfer-Encoding')
-      body = ''
+      payload = ''
     }
 
     // alter headers for 205
     if (this.statusCode === 205) {
-      this.set('Content-Length', '0')
+      this.setHeader('Content-Length', 0)
       this.removeHeader('Transfer-Encoding')
-      body = ''
+      payload = ''
     }
 
     // respond
-    this.end(body, encoding)
+    this.end(payload)
+
+    // if (payload === undefined) {
+    //   this.end()
+    //   return this
+    // }
+
+    // if (payload?.buffer instanceof ArrayBuffer) {
+    //   if (hasContentType === false) {
+    //     this.setHeader('content-type', CONTENT_TYPE.OCTET)
+    //   }
+
+    //   this.send(Buffer.isBuffer(payload) ? payload : Buffer.from(payload.buffer))
+
+    //   return this
+    // }
 
     return this
   }
@@ -180,28 +173,33 @@ class Response extends ServerResponse {
 
     return this
   }
+
+  /**
+   * Set the HTTP status code for the response
+   * @function
+   * @param {number} code - The HTTP status code to set.
+   * @returns {object} The Express Response object.
+   */
+  status (code) {
+    this.statusCode = code
+
+    return this
+  }
+
+  /**
+   * Set the content type for the response
+   * @function
+   * @param {string} type - The content type to set (e.g., 'text/plain', 'application/json').
+   * @returns {object} The Express Response object.
+   */
+  type (type) {
+    const contentType = type.indexOf('/') === -1 ? getContentType(type) : type
+
+    return this.set('Content-Type', contentType)
+  }
 }
 
 export default Response
-
-// this.get = (field) => {
-//   return this.getHeader(field)
-// }
-
-// /**
-//  * Send a JSON response
-//  * @function
-//  * @param {object} [body] - The JSON data to send in the response
-//  * @returns {object} The Express Response object.
-//  */
-// this.json = (body) => {
-//   // content-type
-//   if (!response.get('Content-Type')) {
-//     response.set('Content-Type', 'application/json; charset=UTF-8')
-//   }
-
-//   return response.send(JSON.stringify(body))
-// }
 
 /**
  * Create an Express Response object.

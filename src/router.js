@@ -89,7 +89,7 @@ const createRouter = () => {
     // Find route matching the request
     // TODO: Change this .find to a traditional for
     const route = routes.find(route => {
-      const routeRegex = new RegExp(`^${route.path.replace(/:[^/]+/g, '([\\w-]+)')}$`)
+      const routeRegex = new RegExp(`^${route.path.replace(/:[^/]+/g, '([\\w-]+)')}(\\?[\\w-]+(=[\\w-]+)?(&[\\w-]+(=[\\w-]+)?)*)?$`)
       return route.method === method && routeRegex.test(url)
     })
 
@@ -122,14 +122,7 @@ const createRouter = () => {
         const handler = route.handlers[index]
         index++
         req.params = params
-        // handler(req, res, routeNext)
 
-        // Object.setPrototypeOf(response, res)
-
-        // handler(req, Object.setPrototypeOf({ ...res, ...response }, Object.getPrototypeOf(res)), routeNext)
-        // handler(req, response, routeNext)
-
-        // handler(req, createResponse(req), routeNext)
         handler(req, new Response(req), routeNext)
       }
     }

@@ -9,7 +9,9 @@ Sure, here's an unchecked checklist for an Express 4 API documentation organized
 
 ## Application
 
-- [X] `express()` constructor
+- [X] `mocaccino()` constructor
+- [X] `mocaccino.json([options])` - No `options` implemented yet
+- [X] `mocaccino.urlencoded([options])` - No `options` implemented yet
 - [X] `app.listen()`
 - [ ] `app.disable()`
 - [ ] `app.enable()`
@@ -37,7 +39,7 @@ Sure, here's an unchecked checklist for an Express 4 API documentation organized
 
 - [ ] `req.app`
 - [ ] `req.baseUrl`
-- [ ] `req.body`
+- [X] `req.body`
 - [ ] `req.cookies`
 - [ ] `req.fresh`
 - [ ] `req.hostname`
@@ -45,7 +47,7 @@ Sure, here's an unchecked checklist for an Express 4 API documentation organized
 - [ ] `req.ips`
 - [ ] `req.method`
 - [ ] `req.originalUrl`
-- [ ] `req.params`
+- [X] `req.params`
 - [ ] `req.path`
 - [ ] `req.protocol`
 - [ ] `req.query`
@@ -65,19 +67,19 @@ Sure, here's an unchecked checklist for an Express 4 API documentation organized
 - [ ] `res.download()`
 - [ ] `res.end()`
 - [ ] `res.format()`
-- [ ] `res.get()`
-- [ ] `res.json()`
+- [X] `res.get()`
+- [X] `res.json()`
 - [ ] `res.jsonp()`
 - [ ] `res.links()`
 - [ ] `res.location()`
 - [ ] `res.redirect()`
 - [ ] `res.render()`
-- [ ] `res.send()`
+- [X] `res.send()`
 - [ ] `res.sendFile()`
 - [ ] `res.sendStatus()`
-- [ ] `res.set()`
-- [ ] `res.status()`
-- [ ] `res.type()`
+- [X] `res.set()`
+- [X] `res.status()`
+- [X] `res.type()`
 - [ ] `res.vary()`
 
 ## Router
@@ -97,7 +99,7 @@ Sure, here's an unchecked checklist for an Express 4 API documentation organized
 - [ ] `router.notify()`
 - [ ] `router.options()`
 - [ ] `router.patch()`
-- [ ] `router.post()`
+- [X] `router.post()`
 - [ ] `router.purge()`
 - [ ] `router.put()`
 - [ ] `router.report()`
