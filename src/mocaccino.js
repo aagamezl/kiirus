@@ -1,5 +1,12 @@
 import application from './application.js'
 import router from './router.js'
+import formData from './utils/decoders/formData.js'
+
+const CONTENT_TYPE = {
+  FORM_DATA: 'multipart/form-data',
+  JSON: 'application/json; charset=utf-8',
+  URL_ENCODED: 'application/x-www-form-urlencoded'
+}
 
 /**
  * Create an mocaccino application.
@@ -76,6 +83,32 @@ const mocaccino = () => {
   }
 }
 
+mocaccino.formData = () => {
+  return (req, res, next) => {
+    // Check if there is data in the request body based on the Content-Length header
+    const contentLength = (req.headers['content-length'] ?? '0') | 0
+    const [contentType] = req.headers['content-type'].split(';')
+
+    if (contentType === CONTENT_TYPE.FORM_DATA && contentLength > 0) {
+      const bodyBuffer = []
+
+      req.on('data', (chunk) => {
+        bodyBuffer.push(chunk)
+      })
+
+      req.on('end', () => {
+        const formDataResult = formData(bodyBuffer, req.headers)
+        req.files = formDataResult.files
+        req.body = formDataResult.body
+
+        next()
+      })
+    } else {
+      next()
+    }
+  }
+}
+
 /**
  * Create a middleware that parses JSON bodies.
  * @function
@@ -88,7 +121,7 @@ mocaccino.json = (options) => {
     const contentLength = (req.headers['content-length'] ?? '0') | 0
     const [contentType] = req.headers['content-type'].split(';')
 
-    if (contentType === 'application/json' && contentLength > 0) {
+    if (contentType === CONTENT_TYPE.JSON && contentLength > 0) {
       const bodyBuffer = []
 
       req.on('data', (chunk) => {
@@ -121,7 +154,7 @@ mocaccino.urlencoded = (options) => {
     const contentLength = (req.headers['content-length'] ?? '0') | 0
     const [contentType] = req.headers['content-type'].split(';')
 
-    if (contentType === 'application/x-www-form-urlencoded' && contentLength > 0) {
+    if (contentType === CONTENT_TYPE.URL_ENCODED && contentLength > 0) {
       const bodyBuffer = []
 
       req.on('data', (chunk) => {
@@ -132,6 +165,9 @@ mocaccino.urlencoded = (options) => {
         req.body = decodeURIComponent(Buffer.concat(bodyBuffer).toString())
           .split('&')
           .reduce((formData, pair) => {
+            if (options.extendex === true) {
+
+            }
             const [key, value] = pair.split('=')
             formData[decodeURIComponent(key)] = decodeURIComponent(value)
 

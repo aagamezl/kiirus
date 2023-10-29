@@ -135,15 +135,40 @@ const createRouter = () => {
     routes.push({ method, path, handlers })
   }
 
+  const deleteHandler = (path, ...handlers) => {
+    routes.push({ method: 'DELETE', path, handlers })
+  }
+
   const get = (path, ...handlers) => {
     routes.push({ method: 'GET', path, handlers })
+  }
+
+  const patch = (path, ...handlers) => {
+    routes.push({ method: 'PATCH', path, handlers })
   }
 
   const post = (path, ...handlers) => {
     routes.push({ method: 'POST', path, handlers })
   }
 
-  return { handleRequest, get, post, use }
+  const put = (path, ...handlers) => {
+    routes.push({ method: 'PUT', path, handlers })
+  }
+
+  const update = (path, ...handlers) => {
+    routes.push({ method: 'UPDATE', path, handlers })
+  }
+
+  return {
+    handleRequest,
+    delete: deleteHandler,
+    get,
+    patch,
+    post,
+    put,
+    update,
+    use
+  }
 }
 
 export default createRouter

@@ -9,6 +9,7 @@ const port = 3000
 
 app.use(mocaccino.urlencoded())
 app.use(mocaccino.json())
+app.use(mocaccino.formData())
 
 // app.use(helmet({
 //   contentSecurityPolicy: false,
