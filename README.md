@@ -1,39 +1,51 @@
 # mocaccino
-Fully compatible Express specification running with Bun
+Fully compatible Express specification running with Bun.
 
-## Compatibility 
+## Compatibility with Express 4 API
 
 Sure, here's an unchecked checklist for an Express 4 API documentation organized into sections:
 
-# Express 4 API Documentation Checklist
+## Mocaccino
+
+### Methods
+- [X] `mocaccino()` constructor
+- [X] `mocaccino.formdata([options])` - No `options` implemented yet. New middleware not avaible in Express.
+- [X] `mocaccino.json([options])` - No `options` implemented yet
+- [ ] `mocaccino.raw([options])`
+- [ ] `mocaccino.static(root, [options])`
+- [ ] `mocaccino.text()`
+- [X] `mocaccino.urlencoded([options])` - No `options` implemented yet
 
 ## Application
 
-- [X] `mocaccino()` constructor
-- [X] `mocaccino.json([options])` - No `options` implemented yet
-- [X] `mocaccino.urlencoded([options])` - No `options` implemented yet
-- [X] `app.listen()`
+### Properties
+- [ ] `app.locals`
+- [ ] `app.mountpath`
+
+### Events
+- [ ] `app.mount`
+
+### Methods
+- [ ] `app.all()`
+- [X] `app.delete()`
 - [ ] `app.disable()`
 - [ ] `app.enable()`
 - [ ] `app.enabled()`
-- [ ] `app.set()`
-- [ ] `app.get()`
 - [ ] `app.engine()`
-- [ ] `app.param()`
-- [ ] `app.path()`
-- [ ] `app.render()`
-- [X] `app.use()`
-- [ ] `app.all()`
-- [ ] `app.get()`
-- [ ] `app.post()`
-- [ ] `app.put()`
-- [ ] `app.delete()`
-- [ ] `app.options()`
+- [X] `app.get()`
 - [ ] `app.head()`
-- [ ] `app.trace()`
+- [X] `app.listen()`
+- [ ] `app.options()`
+- [ ] `app.param()`
+- [X] `app.patch()`
+- [ ] `app.path()`
+- [X] `app.post()`
+- [X] `app.put()`
+- [ ] `app.render()`
 - [ ] `app.route()`
-- [ ] `app.locals`
-- [ ] `app.mountpath`
+- [ ] `app.set()`
+- [ ] `app.trace()`
+- [X] `app.use()`
 
 ## Request
 
@@ -87,7 +99,7 @@ Sure, here's an unchecked checklist for an Express 4 API documentation organized
 - [ ] `router.all()`
 - [ ] `router.checkout()`
 - [ ] `router.copy()`
-- [ ] `router.delete()`
+- [X] `router.delete()`
 - [X] `router.get()`
 - [ ] `router.head()`
 - [ ] `router.lock()`
@@ -98,10 +110,10 @@ Sure, here's an unchecked checklist for an Express 4 API documentation organized
 - [ ] `router.m-search()`
 - [ ] `router.notify()`
 - [ ] `router.options()`
-- [ ] `router.patch()`
+- [X] `router.patch()`
 - [X] `router.post()`
 - [ ] `router.purge()`
-- [ ] `router.put()`
+- [X] `router.put()`
 - [ ] `router.report()`
 - [ ] `router.search()`
 - [ ] `router.subscribe()`

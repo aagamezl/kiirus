@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 })
 
 // Create a router
-const router = app.Router()
+const router = mocaccino.Router()
 
 const routeMiddleware = (req, res, next) => {
   console.log('Executing route-level middleware')
@@ -37,6 +37,7 @@ const routeMiddleware = (req, res, next) => {
 
 router.get('/', routeMiddleware, (req, res) => {
   console.log(req.session)
+
   res.end('Hello, World!')
 })
 
@@ -46,11 +47,11 @@ router.post('/users', (req, res) => {
 
 router.get('/users/:userId/books/:bookId', (req, res) => {
   console.log(req.params)
-  // res.end()
+
   res.json({ message: 'Hello, World!' })
 })
 
-const expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
+const expireDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 app.use(session({
   name: 'session',
   keys: ['key1', 'key2'],
@@ -59,7 +60,7 @@ app.use(session({
     httpOnly: true,
     domain: 'http://localhost:3000/',
     path: 'foo/bar',
-    expires: expiryDate
+    expires: expireDate
   }
 }))
 

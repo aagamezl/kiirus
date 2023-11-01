@@ -1,11 +1,37 @@
 import http from 'node:http'
 
+import createRouter from './router.js'
+
 const appMiddleware = []
 const routerStack = []
 
 /**
+ * Mocaccino Application Object
+ *
+ * @typedef {Object} Application
+ * @property {(path: string, middleware: Function) => void} all - Mounts a middleware function for all HTTP methods at a specified path.
+ * @property {(path: string, middleware: Function) => void} delete - Mounts a middleware function to handle HTTP DELETE requests at a specified path.
+ * @property {(setting: string) => void} disable - Disable a setting.
+ * @property {(setting: string) => boolean} disabled - Check if a setting is disabled.
+ * @property {(setting: string) => void} enable - Enable a setting.
+ * @property {(setting: string) => boolean} enabled - Check if a setting is enabled.
+ * @property {(ext: string, callback: Function) => void} engine - Register the given template engine callback as ext.
+ * @property {(path: string, middleware: Function) => void} get - Mounts a middleware function to handle HTTP GET requests at a specified path.
+ * @property {(port?: number | undefined, hostname?: string | undefined, backlog?: number | undefined, listeningListener?: (() => void) | undefined) => any} listen - Starts the HTTP server listening for connections.
+ * @property {(middleware: Function) => void} param - Register middleware to be executed before route handling.
+ * @property {(name: string) => any} path - Get the value of the app's settings when provided the name of the setting.
+ * @property {(path: string, middleware: Function) => void} post - Mounts a middleware function to handle HTTP POST requests at a specified path.
+ * @property {(path: string, middleware: Function) => void} patch - Mounts a middleware function to handle HTTP PATCH requests at a specified path.
+ * @property {(path: string, middleware: Function) => void} put - Mounts a middleware function to handle HTTP PUT requests at a specified path.
+ * @property {(view: string, options?: object, callback: Function) => void} render - Render a view with a callback responding to the client.
+ * @property {(path: string) => object} route - Create a new Route object for the specified path.
+ * @property {(name: string, value: any) => ExpressApplication} set - Set the value of a setting.
+ * @property {(middleware: Function) => void} use - Mount middleware to be executed for every request.
+ */
+
+/**
  * Create an Express application.
- * @returns {object} An Express application instance.
+ * @returns {Application} An Mocaccino application instance.
  */
 const application = () => {
   /**
@@ -48,6 +74,8 @@ const application = () => {
     next()
   }
 
+  const router = createRouter()
+
   return {
     /**
      * Application local variables.
@@ -88,7 +116,7 @@ const application = () => {
    * @param {Function} middleware - The middleware function to be executed.
    */
     delete: (path, middleware) => {
-      // Implementation here
+      return router.delete(path, middleware)
     },
 
     /**
@@ -146,7 +174,7 @@ const application = () => {
      * @param {Function} middleware - The middleware function to be executed.
      */
     get: (path, middleware) => {
-      // Implementation here
+      return router.get(path, middleware)
     },
 
     /**
@@ -156,7 +184,7 @@ const application = () => {
      * @param {number} [port] - The port to listen on.
      * @param {string} [host] - The host to listen on.
      * @param {number} [backlog] - The maximum number of pending connections.
-     * @param {Function} [callback] - A function to be called when the server is listening.
+     * @param {(() => void) | undefined} [listeningListener] - A function to be called when the server is listening.
      */
     listen: (...args) => {
       const server = http.createServer(handleRequest)
@@ -190,7 +218,17 @@ const application = () => {
      * @param {Function} middleware - The middleware function to be executed.
      */
     post: (path, middleware) => {
-      // Implementation here
+      return router.post(path, middleware)
+    },
+
+    /**
+     * Mounts a middleware function to handle HTTP PATH requests at a specified path.
+     * @function
+     * @param {string} path - The path at which the middleware should be mounted.
+     * @param {Function} middleware - The middleware function to be executed.
+     */
+    patch: (path, middleware) => {
+      return router.patch(path, middleware)
     },
 
     /**
@@ -200,7 +238,7 @@ const application = () => {
      * @param {Function} middleware - The middleware function to be executed.
      */
     put: (path, middleware) => {
-      // Implementation here
+      return router.put(path, middleware)
     },
 
     /**

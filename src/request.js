@@ -1,6 +1,14 @@
 import { IncomingMessage } from 'node:http'
 
 /**
+ * Express Response Object with additional methods.
+ * @typedef {Object} BaseRequest
+ * @property {(name: string) => string|undefined} param - Get the value of a response header.
+ *
+ * @typedef {BaseRequest & IncomingMessage} Request
+ */
+
+/**
  * Create an Express Request object.
  * @param {object} req - The HTTP request object.
  * @returns {object} An Express Request object.

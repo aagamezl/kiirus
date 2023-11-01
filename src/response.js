@@ -11,6 +11,23 @@ const CONTENT_TYPE = {
   OCTET: 'application/octet-stream'
 }
 
+/**
+ * Express Response Object with additional methods.
+ * @typedef {Object} BaseResponse
+ * @property {(field: string) => string|undefined} get - Get the value of a response header.
+ * @property {(body?: object, contentType?: string) => ExpressResponse} json - Send a JSON response.
+ * @property {(payload?: string|number|object|Buffer|ArrayBuffer) => ExpressResponse} send - Send a response.
+ * @property {(field: string|object, value?: string|string[]) => ExpressResponse} set - Set response headers.
+ * @property {(code: number) => ExpressResponse} status - Set the HTTP status code for the response.
+ * @property {(type: string) => ExpressResponse} type - Set the content type for the response.
+ *
+ * @typedef {BaseResponse & ServerResponse} Response
+ */
+
+/**
+ * Create a Mocaccino Response
+ * @class
+ */
 class Response extends ServerResponse {
   constructor (req) {
     super(req)

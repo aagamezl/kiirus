@@ -10,84 +10,40 @@ const CONTENT_TYPE = {
 
 /**
  * Create an mocaccino application.
- * @typedef {object} NumberLike
- * - `json(options)`: Create a middleware that parses JSON bodies.
- * - `raw(options)`: Create a middleware that parses raw bodies.
- * - `Router()`: Create a router object.
- * - `static(root, options)`: Create a middleware to serve static files.
- * - `text(options)`: Create a middleware that parses text bodies.
- * - `urlencoded(options)`: Create a middleware that parses URL-encoded bodies.
+ *
+ * @typedef {Object} BaseMocaccino
+ * @property {() => import('./router').Router} Router - A function to create a router object.
+ * @property {(options?: object) => (req: Request, res: Response, next: Function) => void} formData - A function to create middleware that parses Form-Data bodies.
+ * @property {(options?: object) => (req: Request, res: Response, next: Function) => void} json - A function to create middleware that parses JSON bodies.
+ * @property {(options?: object) => (req: Request, res: Response, next: Function) => void} raw - A function to create middleware that parses incoming request payloads into a Buffer.
+ * @property {(root: string, options?: object) => (req: Request, res: Response, next: Function) => void} static - A function to create middleware to serve static files.
+ * @property {(options?: object) => (req: Request, res: Response, next: Function) => void} text - A function to create middleware that parses text bodies.
+ * @property {(options?: object) => (req: Request, res: Response, next: Function) => void} urlencoded - A function to create middleware that parses x-www-form-urlencoded bodies.
+ *
+ * @typedef {BaseMocaccino & import('./application.js').Application} Mocaccino
+ */
+
+/**
+ *
+ * @returns {Mocaccino}
  */
 const mocaccino = () => {
   return {
-    ...application(),
-    /**
-     * Create a middleware that parses JSON bodies.
-     * @function
-     * @param {object} [options] - Options for JSON parsing middleware.
-     * @returns {function} JSON parsing middleware.
-     */
-    // json: (options) => {
-    //   // Implementation here
-    // },
-
-    /**
-     * Create a middleware that parses raw bodies.
-     * @function
-     * @param {object} [options] - Options for raw body parsing middleware.
-     * @returns {function} Raw body parsing middleware.
-     */
-    raw: (options) => {
-      // Implementation here
-    },
-
-    /**
-     * Create a router object.
-     * @function
-     * @returns {import('./router').router} An Mocaccino router instance.
-     */
-    Router: () => {
-      return router()
-    },
-
-    /**
-     * Create a middleware to serve static files.
-     * @function
-     * @param {string} root - The root directory from which to serve static assets.
-     * @param {object} [options] - Options for static file serving middleware.
-     * @returns {function} Static file serving middleware.
-     */
-    static: (root, options) => {
-      // Implementation here
-    },
-
-    /**
-     * Create a middleware that parses text bodies.
-     * @function
-     * @param {object} [options] - Options for text body parsing middleware.
-     * @returns {function} Text body parsing middleware.
-     */
-    text: (options) => {
-      // Implementation here
-    },
-
-    /**
-     * Create a middleware that parses URL-encoded bodies.
-     * @function
-     * @param {object} [options] - Options for URL-encoded body parsing middleware.
-     * @returns {function} URL-encoded body parsing middleware.
-     */
-    urlencoded: (options) => {
-      // Implementation here
-    }
+    ...application()
   }
 }
 
+/**
+ * Create a middleware that parses Form-Data bodies.
+ * @function
+ * @param {object} [options] - Options for JSON parsing middleware.
+ * @returns {function} JSON parsing middleware.
+ */
 mocaccino.formData = () => {
   return (req, res, next) => {
     // Check if there is data in the request body based on the Content-Length header
     const contentLength = (req.headers['content-length'] ?? '0') | 0
-    const [contentType] = req.headers['content-type'].split(';')
+    const [contentType] = (req.headers['content-type'] ?? '').split(';')
 
     if (contentType === CONTENT_TYPE.FORM_DATA && contentLength > 0) {
       const bodyBuffer = []
@@ -119,7 +75,7 @@ mocaccino.json = (options) => {
   return (req, res, next) => {
     // Check if there is data in the request body based on the Content-Length header
     const contentLength = (req.headers['content-length'] ?? '0') | 0
-    const [contentType] = req.headers['content-type'].split(';')
+    const [contentType] = (req.headers['content-type'] ?? '').split(';')
 
     if (contentType === CONTENT_TYPE.JSON && contentLength > 0) {
       const bodyBuffer = []
@@ -140,19 +96,59 @@ mocaccino.json = (options) => {
 }
 
 /**
+ * Create a middleware that parses incoming request payloads into a Buffer
+ * @function
+ * @param {object} [options] - Options for raw body parsing middleware.
+ * @returns {function} Raw body parsing middleware.
+ */
+mocaccino.raw = (options) => {
+  // Implementation here
+}
+
+/**
+ * Create a router object.
+ * @function
+ * @returns {import('./router').Router} An Mocaccino router instance.
+ */
+mocaccino.Router = () => {
+  return router()
+}
+
+/**
+ * Create a middleware to serve static files.
+ * @function
+ * @param {string} root - The root directory from which to serve static assets.
+ * @param {object} [options] - Options for static file serving middleware.
+ * @returns {function} Static file serving middleware.
+ */
+mocaccino.static = (root, options) => {
+  // Implementation here
+}
+
+/**
+ * Create a middleware that parses text bodies.
+ * @function
+ * @param {object} [options] - Options for text body parsing middleware.
+ * @returns {function} Text body parsing middleware.
+ */
+mocaccino.text = (options) => {
+  // Implementation here
+}
+
+/**
  * Built-in middleware in Mocaccino.js. The main objective of this method is to
  * parse the incoming request with urlencoded payloads and is based upon the.
  *
  * This method returns the middleware that parses all the urlencoded bodies.
  *
- * @param {*} options
+ * @param {object} [options]
  * @returns {function} x-www-form-urlencoded parsing middleware.
  */
 mocaccino.urlencoded = (options) => {
   return (req, res, next) => {
     // Check if there is data in the request body based on the Content-Length header
     const contentLength = (req.headers['content-length'] ?? '0') | 0
-    const [contentType] = req.headers['content-type'].split(';')
+    const [contentType] = (req.headers['content-type'] ?? '').split(';')
 
     if (contentType === CONTENT_TYPE.URL_ENCODED && contentLength > 0) {
       const bodyBuffer = []
@@ -165,9 +161,10 @@ mocaccino.urlencoded = (options) => {
         req.body = decodeURIComponent(Buffer.concat(bodyBuffer).toString())
           .split('&')
           .reduce((formData, pair) => {
-            if (options.extendex === true) {
+            // if (options.extendex === true) {
 
-            }
+            // }
+
             const [key, value] = pair.split('=')
             formData[decodeURIComponent(key)] = decodeURIComponent(value)
 
@@ -183,84 +180,3 @@ mocaccino.urlencoded = (options) => {
 }
 
 export default mocaccino
-
-// import router from './router.js'
-
-// const mocaccino = () => {
-//   const appMiddleware = []
-//   const routerStack = []
-
-//   /**
-//    *
-//    * @param {Function} middleware
-//    * @returns {void}
-//    */
-//   const use = (middleware) => {
-//     if (typeof middleware === 'function') {
-//       appMiddleware.push(middleware)
-//     } else if (middleware && middleware.handleRequest) {
-//       // routerStack.push(middleware.handleRequest.bind(middleware))
-//       routerStack.push(middleware.handleRequest)
-//     } else {
-//       throw new Error('Invalid middleware')
-//     }
-//   }
-
-//   /**
-// /**
-//  * Handles incoming HTTP requests by processing them through middleware functions and
-//  * executing the router stack when the middleware chain is complete.
-//  *
-//  * @param {http.IncomingMessage} request - The incoming HTTP request object.
-//  * @param {http.ServerResponse} response - The HTTP response object to be sent back to the client.
-//  */
-//   const handleRequest = (request, response) => {
-//     // const { method, url } = request
-
-//     let index = 0
-//     const next = () => {
-//       if (index >= appMiddleware.length) {
-//         executeRouterStack(request, response)
-//       } else {
-//         const middleware = appMiddleware[index]
-//         index++
-//         middleware(request, response, next)
-//       }
-//     }
-
-//     next()
-//   }
-
-//   const executeRouterStack = (request, response) => {
-//     let index = 0
-//     const next = () => {
-//       if (index >= routerStack.length) {
-//         response.statusCode = 404
-//         response.end('Not Found')
-//       } else {
-//         const middleware = routerStack[index]
-//         index++
-//         middleware(request, response, next)
-//       }
-//     }
-
-//     next()
-//   }
-
-//   /**
-//    *
-//    * @param {number} port
-//    */
-//   const listen = (...args) => {
-//     const server = http.createServer(handleRequest)
-//     // server.listen(port, () => {
-//     //   console.log(`Server is listening on port ${port}`)
-//     // })
-
-//     return server.listen(...args)
-//   }
-
-//   return { use, listen, router }
-// }
-
-// export default mocaccino
