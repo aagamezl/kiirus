@@ -9,23 +9,21 @@ const CONTENT_TYPE = {
 }
 
 /**
- * Create an mocaccino application.
- *
- * @typedef {Object} BaseMocaccino
- * @property {() => import('./router').Router} Router - A function to create a router object.
- * @property {(options?: object) => (req: Request, res: Response, next: Function) => void} formData - A function to create middleware that parses Form-Data bodies.
- * @property {(options?: object) => (req: Request, res: Response, next: Function) => void} json - A function to create middleware that parses JSON bodies.
- * @property {(options?: object) => (req: Request, res: Response, next: Function) => void} raw - A function to create middleware that parses incoming request payloads into a Buffer.
- * @property {(root: string, options?: object) => (req: Request, res: Response, next: Function) => void} static - A function to create middleware to serve static files.
- * @property {(options?: object) => (req: Request, res: Response, next: Function) => void} text - A function to create middleware that parses text bodies.
- * @property {(options?: object) => (req: Request, res: Response, next: Function) => void} urlencoded - A function to create middleware that parses x-www-form-urlencoded bodies.
- *
- * @typedef {BaseMocaccino & import('./application.js').Application} Mocaccino
+ * Mocaccino object with methods for formData, json, and static.
+ * @typedef {Object} Mocaccino
+ * @property {() => import('./router').Router} Router - Create a router object.
+ * @property {(options?: object) => import('./router.js').Middleware} formData - Create a middleware that parses Form-Data bodies.
+ * @property {(options?: object) => import('./router.js').Middleware} json - Create a middleware that parses JSON bodies.
+ * @property {(options?: object) => import('./router.js').Middleware} raw - Create a middleware that parses incoming request payloads into a Buffer.
+ * @property {(root: string, options?: object) => import('./router.js').Middleware} static - Create a middleware to serve static files.
+ * @property {(options?: object) => import('./router.js').Middleware} text - Create a middleware that parses text bodies.
+ * @property {(options?: object) => import('./router.js').Middleware} urlencoded - Create a middleware that parses x-www-form-urlencoded bodies.
+
  */
 
 /**
- *
- * @returns {Mocaccino}
+ * Function to create a Mocaccino object.
+ * @returns {import('./application.js').Application} The created Mocaccino object.
  */
 const mocaccino = () => {
   return {
@@ -37,7 +35,7 @@ const mocaccino = () => {
  * Create a middleware that parses Form-Data bodies.
  * @function
  * @param {object} [options] - Options for JSON parsing middleware.
- * @returns {function} JSON parsing middleware.
+ * @returns {import('./router.js').Middleware} JSON parsing middleware.
  */
 mocaccino.formData = () => {
   return (req, res, next) => {
@@ -69,7 +67,7 @@ mocaccino.formData = () => {
  * Create a middleware that parses JSON bodies.
  * @function
  * @param {object} [options] - Options for JSON parsing middleware.
- * @returns {function} JSON parsing middleware.
+ * @returns {import('./router.js').Middleware} JSON parsing middleware.
  */
 mocaccino.json = (options) => {
   return (req, res, next) => {
@@ -99,7 +97,7 @@ mocaccino.json = (options) => {
  * Create a middleware that parses incoming request payloads into a Buffer
  * @function
  * @param {object} [options] - Options for raw body parsing middleware.
- * @returns {function} Raw body parsing middleware.
+ * @returns {import('./router.js').Middleware} Raw body parsing middleware.
  */
 mocaccino.raw = (options) => {
   // Implementation here
@@ -119,7 +117,7 @@ mocaccino.Router = () => {
  * @function
  * @param {string} root - The root directory from which to serve static assets.
  * @param {object} [options] - Options for static file serving middleware.
- * @returns {function} Static file serving middleware.
+ * @returns {import('./router.js').Middleware} Static file serving middleware.
  */
 mocaccino.static = (root, options) => {
   // Implementation here
@@ -129,7 +127,7 @@ mocaccino.static = (root, options) => {
  * Create a middleware that parses text bodies.
  * @function
  * @param {object} [options] - Options for text body parsing middleware.
- * @returns {function} Text body parsing middleware.
+ * @returns {import('./router.js').Middleware} Text body parsing middleware.
  */
 mocaccino.text = (options) => {
   // Implementation here
@@ -142,7 +140,7 @@ mocaccino.text = (options) => {
  * This method returns the middleware that parses all the urlencoded bodies.
  *
  * @param {object} [options]
- * @returns {function} x-www-form-urlencoded parsing middleware.
+ * @returns {import('./router.js').Middleware} x-www-form-urlencoded parsing middleware.
  */
 mocaccino.urlencoded = (options) => {
   return (req, res, next) => {

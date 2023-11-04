@@ -10,16 +10,17 @@ const port = 3000
 app.use(mocaccino.urlencoded())
 app.use(mocaccino.json())
 app.use(mocaccino.formData())
+app.get()
 
-// app.use(helmet({
-//   contentSecurityPolicy: false,
-//   xDownloadOptions: true
-// }))
+app.use(helmet({
+  contentSecurityPolicy: false,
+  xDownloadOptions: true
+}))
 
-// app.use(cors({
-//   origin: 'http://example.com',
-//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-// }))
+app.use(cors({
+  origin: 'http://example.com',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}))
 
 // Application-level middleware
 app.use((req, res, next) => {

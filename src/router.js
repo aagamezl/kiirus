@@ -10,84 +10,16 @@ import Response from './response.js'
  */
 
 /**
- * Create an Express Router object.
+ * Express-like Router object.
  * @typedef {Object} Router
- * @property {(path: string, middleware: Middleware)} all - Route middleware that will be executed for all HTTP methods at a specified path.
- * @property {(path: string, middleware?: Middleware, callback?: Middleware) => Router} get - Mounts a middleware function to handle HTTP GET requests at a specified path.
- * @property {(param: string|Function, callback: Function) => void} param - Route middleware for parameter processing.
- * @property {(path: string, middleware?: Middleware, callback?: Middleware) => Router} post - Mounts a middleware function to handle HTTP POST requests at a specified path.
- * @property {(path: string) => object} route - Create a new Route object for the specified path.
- * @property {(path: string, middleware?: Middleware, callback?: Middleware) => Router} use - Route middleware that will be executed for all HTTP methods at a specified path.
+ * @property {(req: Request, res: Response, next: Middleware) => void} handleRequest - Handles incoming HTTP requests.
+ * @property {(path: string, ...handlers: Middleware[]) => Router} delete - Mounts a middleware function to handle HTTP DELETE requests at a specified path.
+ * @property {(path: string, ...handlers: Middleware[]) => Router} get - Mounts a middleware function to handle HTTP GET requests at a specified path.
+ * @property {(path: string, ...handlers: Middleware[]) => Router} patch - Mounts a middleware function to handle HTTP PATCH requests at a specified path.
+ * @property {(path: string, ...handlers: Middleware[]) => Router} post - Mounts a middleware function to handle HTTP POST requests at a specified path.
+ * @property {(path: string, ...handlers: Middleware[]) => Router} put - Mounts a middleware function to handle HTTP PUT requests at a specified path.
+ * @property {(method: string, path: string, ...handlers: function[]) => Router} use - Mounts a middleware function to handle HTTP requests with a specified method and path.
  */
-// const router = () => {
-//   return {
-//     /**
-//      * Route middleware that will be executed for all HTTP methods at a specified path.
-//      * @function
-//      * @param {string} path - The path at which the middleware should be executed.
-//      * @param {function} middleware - The middleware function to be executed.
-//      */
-//     all: (path, middleware) => {
-//       // Implementation here
-//     },
-
-//     checkout: () => { },
-//     copy: () => { },
-//     delete: () => { },
-//     get: () => { },
-//     head: () => { },
-//     lock: () => { },
-//     merge: () => { },
-//     mkactivity: () => { },
-//     mkcol: () => { },
-//     move: () => { },
-//     'm-search': () => { },
-//     notify: () => { },
-//     options: () => { },
-//     patch: () => { },
-//     post: () => { },
-//     purge: () => { },
-//     put: () => { },
-//     report: () => { },
-//     search: () => { },
-//     subscribe: () => { },
-//     trace: () => { },
-//     unlock: () => { },
-//     unsubscribe: () => { },
-
-//     /**
-//      * Route middleware for parameter processing.
-//      * @function
-//      * @param {string|function} param - The parameter name or a callback function.
-//      * @param {function} callback - The middleware function to be executed for the parameter.
-//      */
-//     param: (param, callback) => {
-//       // Implementation here
-//     },
-
-//     /**
-//      * Create a new Route object for the specified path.
-//      * @function
-//      * @param {string} path - The path pattern for the route.
-//      * @returns {object} A new Route instance.
-//      */
-//     route: (path) => {
-//       // Implementation here
-//     },
-
-//     /**
-//      * Route middleware that will be executed for all HTTP methods at a specified path.
-//      * @function
-//      * @param {string} path - The path at which the middleware should be executed.
-//      * @param {function} middleware - The middleware function to be executed.
-//      */
-//     use: (path, middleware) => {
-//       // Implementation here
-//     }
-//   }
-// }
-
-// export default router
 
 const createRouter = () => {
   const routes = []
@@ -140,10 +72,24 @@ const createRouter = () => {
       routeNext()
     },
 
-    use: (method, path, ...handlers) => {
-      routes.push({ method, path, handlers })
+    acl: (path, ...handlers) => {
+      routes.push({ method: 'ACL', path, handlers })
+    },
 
-      return router
+    bind: (path, ...handlers) => {
+      routes.push({ method: 'BIND', path, handlers })
+    },
+
+    checkout: (path, ...handlers) => {
+      routes.push({ method: 'CHECKOUT', path, handlers })
+    },
+
+    connect: (path, ...handlers) => {
+      routes.push({ method: 'CONNECT', path, handlers })
+    },
+
+    copy: (path, ...handlers) => {
+      routes.push({ method: 'COPY', path, handlers })
     },
 
     delete: (path, ...handlers) => {
@@ -158,6 +104,50 @@ const createRouter = () => {
       return router
     },
 
+    head: (path, ...handlers) => {
+      routes.push({ method: 'HEAD', path, handlers })
+    },
+
+    link: (path, ...handlers) => {
+      routes.push({ method: 'LINK', path, handlers })
+    },
+
+    lock: (path, ...handlers) => {
+      routes.push({ method: 'LOCK', path, handlers })
+    },
+
+    msearch: (path, ...handlers) => {
+      routes.push({ method: 'M-SEARCH', path, handlers })
+    },
+
+    merge: (path, ...handlers) => {
+      routes.push({ method: 'MERGE', path, handlers })
+    },
+
+    mkactivity: (path, ...handlers) => {
+      routes.push({ method: 'MKACTIVITY', path, handlers })
+    },
+
+    mkcalendar: (path, ...handlers) => {
+      routes.push({ method: 'MKCALENDAR', path, handlers })
+    },
+
+    mkcol: (path, ...handlers) => {
+      routes.push({ method: 'MKCOL', path, handlers })
+    },
+
+    move: (path, ...handlers) => {
+      routes.push({ method: 'MOVE', path, handlers })
+    },
+
+    notify: (path, ...handlers) => {
+      routes.push({ method: 'NOTIFY', path, handlers })
+    },
+
+    options: (path, ...handlers) => {
+      routes.push({ method: 'OPTIONS', path, handlers })
+    },
+
     patch: (path, ...handlers) => {
       routes.push({ method: 'PATCH', path, handlers })
 
@@ -170,31 +160,72 @@ const createRouter = () => {
       return router
     },
 
+    propfind: (path, ...handlers) => {
+      routes.push({ method: 'PROPFIND', path, handlers })
+    },
+
+    proppatch: (path, ...handlers) => {
+      routes.push({ method: 'PROPPATCH', path, handlers })
+    },
+
     put: (path, ...handlers) => {
       routes.push({ method: 'PUT', path, handlers })
 
       return router
     },
 
-    update: (path, ...handlers) => {
-      routes.push({ method: 'UPDATE', path, handlers })
+    purge: (path, ...handlers) => {
+      routes.push({ method: 'PURGE', path, handlers })
+    },
+
+    rebind: (path, ...handlers) => {
+      routes.push({ method: 'REBIND', path, handlers })
+    },
+
+    report: (path, ...handlers) => {
+      routes.push({ method: 'REPORT', path, handlers })
+    },
+
+    search: (path, ...handlers) => {
+      routes.push({ method: 'SEARCH', path, handlers })
+    },
+
+    source: (path, ...handlers) => {
+      routes.push({ method: 'SOURCE', path, handlers })
+    },
+
+    subscribe: (path, ...handlers) => {
+      routes.push({ method: 'SUBSCRIBE', path, handlers })
+    },
+
+    trace: (path, ...handlers) => {
+      routes.push({ method: 'TRACE', path, handlers })
+    },
+
+    unbind: (path, ...handlers) => {
+      routes.push({ method: 'UNBIND', path, handlers })
+    },
+
+    unlink: (path, ...handlers) => {
+      routes.push({ method: 'UNLINK', path, handlers })
+    },
+
+    unlock: (path, ...handlers) => {
+      routes.push({ method: 'UNLOCK', path, handlers })
+    },
+
+    unsubscribe: (path, ...handlers) => {
+      routes.push({ method: 'UNSUBSCRIBE', path, handlers })
+    },
+
+    use: (method, path, ...handlers) => {
+      routes.push({ method, path, handlers })
 
       return router
     }
   }
 
   return router
-
-  // return {
-  //   handleRequest,
-  //   delete: deleteHandler,
-  //   get,
-  //   patch,
-  //   post,
-  //   put,
-  //   update,
-  //   use
-  // }
 }
 
 export default createRouter

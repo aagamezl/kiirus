@@ -49,6 +49,8 @@ Sure, here's an unchecked checklist for an Express 4 API documentation organized
 
 ## Request
 
+### Properties
+
 - [ ] `req.app`
 - [ ] `req.baseUrl`
 - [X] `req.body`
@@ -69,9 +71,27 @@ Sure, here's an unchecked checklist for an Express 4 API documentation organized
 - [ ] `req.subdomains`
 - [ ] `req.xhr`
 
+### Methods
+
+- [ ] `req.accepts()`
+- [ ] `req.acceptsCharsets()`
+- [ ] `req.acceptsEncodings()`
+- [ ] `req.acceptsLanguages()`
+- [ ] `req.get()`
+- [ ] `req.is()`
+- [ ] `req.param()`
+- [ ] `req.range()`
+
 ## Response
 
+### Properties
+
 - [ ] `res.app`
+- [ ] `res.headersSent`
+- [ ] `res.locals`
+
+### Methods
+
 - [ ] `res.append()`
 - [ ] `res.attachment()`
 - [ ] `res.clearCookie()`
@@ -96,37 +116,50 @@ Sure, here's an unchecked checklist for an Express 4 API documentation organized
 
 ## Router
 
+## Methods
+
 - [ ] `router.all()`
-- [ ] `router.checkout()`
-- [ ] `router.copy()`
-- [X] `router.delete()`
-- [X] `router.get()`
-- [ ] `router.head()`
-- [ ] `router.lock()`
-- [ ] `router.merge()`
-- [ ] `router.mkactivity()`
-- [ ] `router.mkcol()`
-- [ ] `router.move()`
-- [ ] `router.m-search()`
-- [ ] `router.notify()`
-- [ ] `router.options()`
-- [X] `router.patch()`
-- [X] `router.post()`
-- [ ] `router.purge()`
-- [X] `router.put()`
-- [ ] `router.report()`
-- [ ] `router.search()`
-- [ ] `router.subscribe()`
-- [ ] `router.trace()`
-- [ ] `router.unlock()`
-- [ ] `router.unsubscribe()`
-- [ ] `router.route()`
-- [X] `router.use()`
+- [X] `router.acl`
+- [X] `router.bind`
+- [X] `router.checkout`
+- [X] `router.connect`
+- [X] `router.copy`
+- [X] `router.delete`
+- [X] `router.get`
+- [X] `router.head`
+- [X] `router.link`
+- [X] `router.lock`
+- [X] `router.m-search`
+- [X] `router.merge`
+- [X] `router.mkactivity`
+- [X] `router.mkcalendar`
+- [X] `router.mkcol`
+- [X] `router.move`
+- [X] `router.notify`
+- [X] `router.options`
 - [ ] `router.param()`
+- [X] `router.patch`
+- [X] `router.post`
+- [X] `router.propfind`
+- [X] `router.proppatch`
+- [X] `router.purge`
+- [X] `router.put`
+- [X] `router.rebind`
+- [X] `router.report`
+- [X] `router.route()`
+- [X] `router.search`
+- [X] `router.source`
+- [X] `router.subscribe`
+- [X] `router.trace`
+- [X] `router.unbind`
+- [X] `router.unlink`
+- [X] `router.unlock`
+- [X] `router.unsubscribe`
+- [X] `router.use()`
 
 ## Middleware
 
-- [ ] Custom middleware functions
+- [X] `mocaccino.formdata()` custom middleware function to managa FORM-DATA
 
 ## Error Handling
 
@@ -136,8 +169,3 @@ Sure, here's an unchecked checklist for an Express 4 API documentation organized
 
 - [ ] View engines
 - [ ] Template rendering
-
-## Miscellaneous
-
-- [ ] `express.static()`
-- [ ] Built-in middleware

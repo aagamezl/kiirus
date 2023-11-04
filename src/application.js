@@ -2,13 +2,17 @@ import http from 'node:http'
 
 import createRouter from './router.js'
 
+console.log(http.METHODS.map(function lowerCaseMethod (method) {
+  return method.toLowerCase()
+}).length)
+
 const appMiddleware = []
 const routerStack = []
 
 /**
  * Mocaccino Application Object
  *
- * @typedef {Object} Application
+ * @typedef {Object} Application3
  * @property {(path: string, middleware: Function) => void} all - Mounts a middleware function for all HTTP methods at a specified path.
  * @property {(path: string, middleware: Function) => void} delete - Mounts a middleware function to handle HTTP DELETE requests at a specified path.
  * @property {(setting: string) => void} disable - Disable a setting.
@@ -26,7 +30,18 @@ const routerStack = []
  * @property {(view: string, options?: object, callback: Function) => void} render - Render a view with a callback responding to the client.
  * @property {(path: string) => object} route - Create a new Route object for the specified path.
  * @property {(name: string, value: any) => ExpressApplication} set - Set the value of a setting.
- * @property {(middleware: Function) => void} use - Mount middleware to be executed for every request.
+ * @property {(middleware: import('./router.js').Middleware | import('./router.js').Router) => void} use - Mount middleware to be executed for every request.
+ */
+
+/**
+ * Mocaccino new Application Object
+ *
+ * @typedef {Object} Application
+ * @property {import('./router.js').Router["delete"]} delete - Mounts a middleware function to handle HTTP DELETE requests at a specified path.
+ * @property {import('./router.js').Router["get"]} get - Mounts a middleware function to handle HTTP GET requests at a specified path.
+ * @property {import('./router.js').Router["patch"]} patch - Mounts a middleware function to handle HTTP PATCH requests at a specified path.
+ * @property {import('./router.js').Router["post"]} post - Mounts a middleware function to handle HTTP POST requests at a specified path.
+ * @property {import('./router.js').Router["put"]} put - Mounts a middleware function to handle HTTP PUT requests at a specified path.
  */
 
 /**
@@ -276,7 +291,7 @@ const application = () => {
     /**
      *:ount middleware to be executed for every request to the
      * @function
-     * @,param {Function} middleware - The middleware function to be executed.
+     * @param {import('./router.js').Middleware | import('./router.js').Router} middleware - The middleware function to be executed.
      */
     use: (middleware) => {
       if (typeof middleware === 'function') {
