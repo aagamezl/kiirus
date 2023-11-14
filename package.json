@@ -2,13 +2,25 @@
   "name": "mocaccino",
   "version": "1.0.0",
   "description": "Fully compatible Express specification running with Bun",
-  "main": "server.js",
+  "main": "mocaccino.js",
   "type": "module",
+  "files": [
+    "src/**/*"
+  ],
   "scripts": {
     "lint": "standard",
     "lint:fix": "standard --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "bun server.js",
+    "start:dev": "bun --hot server.js"
+  },
+  "standard": {
+    "globals": [
+      "Bun"
+    ],
+    "ignore": [
+      "examples"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -21,6 +33,10 @@
     "mime-db": "^1.52.0"
   },
   "devDependencies": {
-    "standard": "^17.1.0"
+    "standard": "^17.1.0",
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   }
 }

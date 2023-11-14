@@ -1,4 +1,4 @@
-import Response from './response.js'
+// import Response from './response.js'
 
 /**
  * A middleware function that takes an Express.js request, response, and next function.
@@ -30,9 +30,12 @@ const createRouter = () => {
 
       // Find route matching the request
       // TODO: Change this .find to a traditional for
+      // const route = routes.find(route => {
+      //   const routeRegex = new RegExp(`^${route.path.replace(/:[^/]+/g, '([\\w-]+)')}(\\?[\\w-]+(=[\\w-]+)?(&[\\w-]+(=[\\w-]+)?)*)?$`)
+      //   return route.method === method && routeRegex.test(url)
+      // })
       const route = routes.find(route => {
-        const routeRegex = new RegExp(`^${route.path.replace(/:[^/]+/g, '([\\w-]+)')}(\\?[\\w-]+(=[\\w-]+)?(&[\\w-]+(=[\\w-]+)?)*)?$`)
-        return route.method === method && routeRegex.test(url)
+        return route.method === method && route.path.test(url)
       })
 
       if (!route) {
@@ -43,33 +46,33 @@ const createRouter = () => {
       }
 
       // Extract parameters from the URL
-      const params = {}
-      const urlParts = url.split('/')
-      const routeParts = route.path.split('/')
+      // const params = {}
+      // const urlParts = url.split('/')
+      // const routeParts = route.path.split('/')
 
-      for (let i = 0, length = routeParts.length; i < length; i++) {
-        if (routeParts[i].startsWith(':')) {
-          params[routeParts[i].slice(1)] = urlParts[i]
-        }
-      }
+      // for (let i = 0, length = routeParts.length; i < length; i++) {
+      //   if (routeParts[i].startsWith(':')) {
+      //     params[routeParts[i].slice(1)] = urlParts[i]
+      //   }
+      // }
 
       // Apply route-level middleware
       let index = 0
       const routeNext = () => {
         if (index >= route.handlers.length) {
           // No more route handlers to execute
-          next()
+          return next()
         } else {
           const handler = route.handlers[index]
           index++
-          req.params = params
+          req.params = url.match(route.path).groups
 
-          handler(req, new Response(req), routeNext)
+          return handler(req, res, routeNext)
         }
       }
 
       // Start executing route handlers chain
-      routeNext()
+      return routeNext()
     },
 
     acl: (path, ...handlers) => {
@@ -99,7 +102,12 @@ const createRouter = () => {
     },
 
     get: (path, ...handlers) => {
-      routes.push({ method: 'GET', path, handlers })
+      // routes.push({ method: 'GET', path, handlers })
+      routes.push({
+        method: 'GET',
+        path: new RegExp(path.replace(/:(\w+)+/g, '(?<$1>\\w+)')),
+        handlers
+      })
 
       return router
     },

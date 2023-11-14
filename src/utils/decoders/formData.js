@@ -54,42 +54,6 @@ const formData = (rawData, headers) => {
   }
 
   return { formData, files }
-
-  // for (const item of rawDataArray) {
-  //   const name = getMatching(item, /(?:name=")(.+?)(?:")/)
-  //   if (!name/*  || !(name = name.trim()) */) {
-  //     continue
-  //   }
-
-  //   const value = getMatching(item, /(?:\n\n)([\S\s]*)(?:\n--$)/)
-  //   if (!value) {
-  //     continue
-  //   }
-
-  //   let filename = getMatching(item, /(?:filename=")(.*?)(?:")/)
-  //   if (filename && (filename = filename.trim())) {
-  //     // Add the file information in a files array
-  //     const file = {}
-  //     file[name] = value
-  //     file.filename = filename
-  //     let contentType = getMatching(item, /(?:Content-Type:)(.*?)(?:\n)/)
-
-  //     if (contentType && (contentType = contentType.trim())) {
-  //       file['Content-Type'] = contentType
-  //     }
-
-  //     if (!result.files) {
-  //       result.files = []
-  //     }
-
-  //     result.files.push(file)
-  //   } else {
-  //     // Key/Value pair
-  //     result[name] = value
-  //   }
-  // }
-
-  return result
 }
 
 export default formData

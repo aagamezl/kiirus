@@ -1,10 +1,8 @@
-import http from 'node:http'
-
 import createRouter from './router.js'
 
-console.log(http.METHODS.map(function lowerCaseMethod (method) {
-  return method.toLowerCase()
-}).length)
+// console.log(http.METHODS.map(function lowerCaseMethod (method) {
+//   return method.toLowerCase()
+// }).length)
 
 const appMiddleware = []
 const routerStack = []
@@ -42,6 +40,9 @@ const routerStack = []
  * @property {import('./router.js').Router["patch"]} patch - Mounts a middleware function to handle HTTP PATCH requests at a specified path.
  * @property {import('./router.js').Router["post"]} post - Mounts a middleware function to handle HTTP POST requests at a specified path.
  * @property {import('./router.js').Router["put"]} put - Mounts a middleware function to handle HTTP PUT requests at a specified path.
+ *
+ * @property {(port?: number | undefined, hostname?: string | undefined, backlog?: number | undefined, listeningListener?: (() => void) | undefined) => any} listen - Starts the HTTP server listening for connections.
+ * @property {(middleware: import('./router.js').Middleware | import('./router.js').Router) => void} use - Mount middleware to be executed for every request.
  */
 
 /**
@@ -54,22 +55,26 @@ const application = () => {
    * executing the router stack when the middleware chain is complete.
    *
    * @param {http.IncomingMessage} request - The incoming HTTP request object.
-   * @param {http.ServerResponse} response - The HTTP response object to be sent back to the client.
+   * @param {import('bun').Server} server - The HTTP response object to be sent back to the client.
    */
-  const handleRequest = (req, res) => {
+  // const handleRequest = (req, res) => {
+  const handleRequest = (req) => {
     let index = 0
 
     const next = () => {
       if (index >= appMiddleware.length) {
-        executeRouterStack(req, res)
+        // executeRouterStack(req, res)
+        return executeRouterStack(req, Response)
       } else {
         const middleware = appMiddleware[index]
         index++
-        middleware(req, res, next)
+        // middleware(req, res, next)
+        // return middleware(req, new Response(), next)
+        return middleware(req, Response, next)
       }
     }
 
-    next()
+    return next()
   }
 
   const executeRouterStack = (request, response) => {
@@ -82,11 +87,11 @@ const application = () => {
       } else {
         const middleware = routerStack[index]
         index++
-        middleware(request, response, next)
+        return middleware(request, response, next)
       }
     }
 
-    next()
+    return next()
   }
 
   const router = createRouter()
@@ -197,14 +202,41 @@ const application = () => {
      *
      * @function
      * @param {number} [port] - The port to listen on.
-     * @param {string} [host] - The host to listen on.
-     * @param {number} [backlog] - The maximum number of pending connections.
-     * @param {(() => void) | undefined} [listeningListener] - A function to be called when the server is listening.
+     * @param {string} [hostname] - The host to listen on.
+     * @param {(() => void) | undefined} [callback] - A function to be called when the server is listening.
+     * @param {boolean} [development] - The maximum number of pending connections.
+     * @param {(error: Error) => Response | Promise<Response>} [error] - The maximum number of pending connections.
      */
-    listen: (...args) => {
-      const server = http.createServer(handleRequest)
+    listen: (port, hostname, callback, development, error, tls, maxRequestBodySize, lowMemoryMode) => {
+      // const server = http.createServer(handleRequest)
 
-      return server.listen(...args)
+      // return server.listen(...args)
+
+      // Check if the 'host' parameter is provided
+      if (typeof hostname === 'function') {
+        callback = hostname
+        hostname = '0.0.0.0'
+      }
+
+      // Check if the 'callback' parameter is provided
+      if (typeof callback !== 'function') {
+        callback = undefined
+      }
+
+      callback = callback ?? (() => { }) // Default callback is an empty function
+
+      callback()
+
+      Bun.serve({
+        port, // defaults to $BUN_PORT, $PORT, $NODE_PORT otherwise 3000
+        hostname, // defaults to "0.0.0.0"
+        fetch: handleRequest,
+        development,
+        error,
+        tls,
+        maxRequestBodySize,
+        lowMemoryMode
+      })
     },
 
     /**
