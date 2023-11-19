@@ -18,13 +18,13 @@ This library tries to have no dependencies or as few as possible.
 ## Kiirus
 
 ### Methods
-- [X] `mocaccino()` constructor
-- [X] `mocaccino.formdata([options])` - No `options` implemented yet. New middleware not avaible in Express.
-- [X] `mocaccino.json([options])` - No `options` implemented yet
-- [ ] `mocaccino.raw([options])`
-- [ ] `mocaccino.static(root, [options])`
-- [ ] `mocaccino.text()`
-- [X] `mocaccino.urlencoded([options])` - No `options` implemented yet
+- [X] `kiirus()` constructor
+- [X] `kiirus.formdata([options])` - No `options` implemented yet. New middleware not avaible in Express.
+- [X] `kiirus.json([options])` - No `options` implemented yet
+- [ ] `kiirus.raw([options])`
+- [ ] `kiirus.static(root, [options])`
+- [ ] `kiirus.text()`
+- [X] `kiirus.urlencoded([options])` - No `options` implemented yet
 
 ## Application
 
@@ -36,25 +36,49 @@ This library tries to have no dependencies or as few as possible.
 - [X] `app.mount`
 
 ### Methods
-- [ ] `app.all()`
-- [X] `app.delete()`
+- [X] `app.acl`
+- [X] `app.bind`
+- [X] `app.checkout`
+- [X] `app.connect`
+- [X] `app.copy`
+- [X] `app.delete`
 - [ ] `app.disable()`
 - [ ] `app.enable()`
 - [ ] `app.enabled()`
 - [ ] `app.engine()`
-- [X] `app.get()`
-- [ ] `app.head()`
+- [X] `app.get`
+- [X] `app.head`
+- [X] `app.link`
 - [X] `app.listen()`
-- [ ] `app.options()`
+- [X] `app.lock`
+- [X] `app.m-search`
+- [X] `app.merge`
+- [X] `app.mkactivity`
+- [X] `app.mkcalendar`
+- [X] `app.mkcol`
+- [X] `app.move`
+- [X] `app.notify`
+- [X] `app.options`
 - [ ] `app.param()`
-- [X] `app.patch()`
-- [ ] `app.path()`
-- [X] `app.post()`
-- [X] `app.put()`
+- [X] `app.patch`
+- [X] `app.post`
+- [X] `app.propfind`
+- [X] `app.proppatch`
+- [X] `app.purge`
+- [X] `app.put`
+- [X] `app.rebind`
 - [ ] `app.render()`
+- [X] `app.report`
 - [ ] `app.route()`
+- [X] `app.search`
 - [ ] `app.set()`
-- [ ] `app.trace()`
+- [X] `app.source`
+- [X] `app.subscribe`
+- [X] `app.trace`
+- [X] `app.unbind`
+- [X] `app.unlink`
+- [X] `app.unlock`
+- [X] `app.unsubscribe`
 - [X] `app.use()`
 
 ## Request
@@ -156,7 +180,7 @@ This library tries to have no dependencies or as few as possible.
 - [X] `router.put`
 - [X] `router.rebind`
 - [X] `router.report`
-- [X] `router.route()`
+- [ ] `router.route()`
 - [X] `router.search`
 - [X] `router.source`
 - [X] `router.subscribe`
