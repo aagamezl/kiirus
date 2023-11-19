@@ -21,219 +21,220 @@
  * @property {(method: string, path: string, ...handlers: function[]) => Router} use - Mounts a middleware function to handle HTTP requests with a specified method and path.
  */
 
-const createRouter = () => {
-  const routes = []
+// const createRouter = () => {
+const routes = []
 
-  const router = {
-    handleRequest: (req, res, next) => {
-      const { method, url } = req
+const router = {
+  handleRequest: (req, res, next) => {
+    const { method, url } = req
 
-      // Find route matching the request
-      // TODO: Change this .find to a traditional for
-      // const route = routes.find(route => {
-      //   const routeRegex = new RegExp(`^${route.path.replace(/:[^/]+/g, '([\\w-]+)')}(\\?[\\w-]+(=[\\w-]+)?(&[\\w-]+(=[\\w-]+)?)*)?$`)
-      //   return route.method === method && routeRegex.test(url)
-      // })
-      const route = routes.find(route => {
-        return route.method === method && route.path.test(url)
-      })
+    // Find route matching the request
+    // TODO: Change this .find to a traditional for
+    // const route = routes.find(route => {
+    //   const routeRegex = new RegExp(`^${route.path.replace(/:[^/]+/g, '([\\w-]+)')}(\\?[\\w-]+(=[\\w-]+)?(&[\\w-]+(=[\\w-]+)?)*)?$`)
+    //   return route.method === method && routeRegex.test(url)
+    // })
+    const route = routes.find(route => {
+      return route.method === method && route.path.test(url)
+    })
 
-      if (!route) {
-        res.statusCode = 404
-        res.end('Not Found')
+    if (!route) {
+      // res.statusCode = 404
+      // res.end('Not Found')
 
-        return
-      }
-
-      // Extract parameters from the URL
-      // const params = {}
-      // const urlParts = url.split('/')
-      // const routeParts = route.path.split('/')
-
-      // for (let i = 0, length = routeParts.length; i < length; i++) {
-      //   if (routeParts[i].startsWith(':')) {
-      //     params[routeParts[i].slice(1)] = urlParts[i]
-      //   }
-      // }
-
-      // Apply route-level middleware
-      let index = 0
-      const routeNext = () => {
-        if (index >= route.handlers.length) {
-          // No more route handlers to execute
-          return next()
-        } else {
-          const handler = route.handlers[index]
-          index++
-          req.params = url.match(route.path).groups
-
-          return handler(req, res, routeNext)
-        }
-      }
-
-      // Start executing route handlers chain
-      return routeNext()
-    },
-
-    acl: (path, ...handlers) => {
-      routes.push({ method: 'ACL', path, handlers })
-    },
-
-    bind: (path, ...handlers) => {
-      routes.push({ method: 'BIND', path, handlers })
-    },
-
-    checkout: (path, ...handlers) => {
-      routes.push({ method: 'CHECKOUT', path, handlers })
-    },
-
-    connect: (path, ...handlers) => {
-      routes.push({ method: 'CONNECT', path, handlers })
-    },
-
-    copy: (path, ...handlers) => {
-      routes.push({ method: 'COPY', path, handlers })
-    },
-
-    delete: (path, ...handlers) => {
-      routes.push({ method: 'DELETE', path, handlers })
-
-      return router
-    },
-
-    get: (path, ...handlers) => {
-      // routes.push({ method: 'GET', path, handlers })
-      routes.push({
-        method: 'GET',
-        path: new RegExp(path.replace(/:(\w+)+/g, '(?<$1>\\w+)')),
-        handlers
-      })
-
-      return router
-    },
-
-    head: (path, ...handlers) => {
-      routes.push({ method: 'HEAD', path, handlers })
-    },
-
-    link: (path, ...handlers) => {
-      routes.push({ method: 'LINK', path, handlers })
-    },
-
-    lock: (path, ...handlers) => {
-      routes.push({ method: 'LOCK', path, handlers })
-    },
-
-    msearch: (path, ...handlers) => {
-      routes.push({ method: 'M-SEARCH', path, handlers })
-    },
-
-    merge: (path, ...handlers) => {
-      routes.push({ method: 'MERGE', path, handlers })
-    },
-
-    mkactivity: (path, ...handlers) => {
-      routes.push({ method: 'MKACTIVITY', path, handlers })
-    },
-
-    mkcalendar: (path, ...handlers) => {
-      routes.push({ method: 'MKCALENDAR', path, handlers })
-    },
-
-    mkcol: (path, ...handlers) => {
-      routes.push({ method: 'MKCOL', path, handlers })
-    },
-
-    move: (path, ...handlers) => {
-      routes.push({ method: 'MOVE', path, handlers })
-    },
-
-    notify: (path, ...handlers) => {
-      routes.push({ method: 'NOTIFY', path, handlers })
-    },
-
-    options: (path, ...handlers) => {
-      routes.push({ method: 'OPTIONS', path, handlers })
-    },
-
-    patch: (path, ...handlers) => {
-      routes.push({ method: 'PATCH', path, handlers })
-
-      return router
-    },
-
-    post: (path, ...handlers) => {
-      routes.push({ method: 'POST', path, handlers })
-
-      return router
-    },
-
-    propfind: (path, ...handlers) => {
-      routes.push({ method: 'PROPFIND', path, handlers })
-    },
-
-    proppatch: (path, ...handlers) => {
-      routes.push({ method: 'PROPPATCH', path, handlers })
-    },
-
-    put: (path, ...handlers) => {
-      routes.push({ method: 'PUT', path, handlers })
-
-      return router
-    },
-
-    purge: (path, ...handlers) => {
-      routes.push({ method: 'PURGE', path, handlers })
-    },
-
-    rebind: (path, ...handlers) => {
-      routes.push({ method: 'REBIND', path, handlers })
-    },
-
-    report: (path, ...handlers) => {
-      routes.push({ method: 'REPORT', path, handlers })
-    },
-
-    search: (path, ...handlers) => {
-      routes.push({ method: 'SEARCH', path, handlers })
-    },
-
-    source: (path, ...handlers) => {
-      routes.push({ method: 'SOURCE', path, handlers })
-    },
-
-    subscribe: (path, ...handlers) => {
-      routes.push({ method: 'SUBSCRIBE', path, handlers })
-    },
-
-    trace: (path, ...handlers) => {
-      routes.push({ method: 'TRACE', path, handlers })
-    },
-
-    unbind: (path, ...handlers) => {
-      routes.push({ method: 'UNBIND', path, handlers })
-    },
-
-    unlink: (path, ...handlers) => {
-      routes.push({ method: 'UNLINK', path, handlers })
-    },
-
-    unlock: (path, ...handlers) => {
-      routes.push({ method: 'UNLOCK', path, handlers })
-    },
-
-    unsubscribe: (path, ...handlers) => {
-      routes.push({ method: 'UNSUBSCRIBE', path, handlers })
-    },
-
-    use: (method, path, ...handlers) => {
-      routes.push({ method, path, handlers })
-
-      return router
+      return new Response(undefined, { statusText: 'Not Found', status: 404 })
     }
-  }
 
-  return router
+    // Extract parameters from the URL
+    // const params = {}
+    // const urlParts = url.split('/')
+    // const routeParts = route.path.split('/')
+
+    // for (let i = 0, length = routeParts.length; i < length; i++) {
+    //   if (routeParts[i].startsWith(':')) {
+    //     params[routeParts[i].slice(1)] = urlParts[i]
+    //   }
+    // }
+
+    // Apply route-level middleware
+    let index = 0
+    const routeNext = () => {
+      if (index >= route.handlers.length) {
+        // No more route handlers to execute
+        return next()
+      } else {
+        const handler = route.handlers[index]
+        index++
+        req.params = url.match(route.path).groups
+
+        return handler(req, res, routeNext)
+      }
+    }
+
+    // Start executing route handlers chain
+    return routeNext()
+  },
+
+  acl: (path, ...handlers) => {
+    routes.push({ method: 'ACL', path, handlers })
+  },
+
+  bind: (path, ...handlers) => {
+    routes.push({ method: 'BIND', path, handlers })
+  },
+
+  checkout: (path, ...handlers) => {
+    routes.push({ method: 'CHECKOUT', path, handlers })
+  },
+
+  connect: (path, ...handlers) => {
+    routes.push({ method: 'CONNECT', path, handlers })
+  },
+
+  copy: (path, ...handlers) => {
+    routes.push({ method: 'COPY', path, handlers })
+  },
+
+  delete: (path, ...handlers) => {
+    routes.push({ method: 'DELETE', path, handlers })
+
+    return router
+  },
+
+  get: (path, ...handlers) => {
+    // routes.push({ method: 'GET', path, handlers })
+    routes.push({
+      method: 'GET',
+      path: new RegExp(path.replace(/:(\w+)+/g, '(?<$1>\\w+)')),
+      handlers
+    })
+
+    return router
+  },
+
+  head: (path, ...handlers) => {
+    routes.push({ method: 'HEAD', path, handlers })
+  },
+
+  link: (path, ...handlers) => {
+    routes.push({ method: 'LINK', path, handlers })
+  },
+
+  lock: (path, ...handlers) => {
+    routes.push({ method: 'LOCK', path, handlers })
+  },
+
+  msearch: (path, ...handlers) => {
+    routes.push({ method: 'M-SEARCH', path, handlers })
+  },
+
+  merge: (path, ...handlers) => {
+    routes.push({ method: 'MERGE', path, handlers })
+  },
+
+  mkactivity: (path, ...handlers) => {
+    routes.push({ method: 'MKACTIVITY', path, handlers })
+  },
+
+  mkcalendar: (path, ...handlers) => {
+    routes.push({ method: 'MKCALENDAR', path, handlers })
+  },
+
+  mkcol: (path, ...handlers) => {
+    routes.push({ method: 'MKCOL', path, handlers })
+  },
+
+  move: (path, ...handlers) => {
+    routes.push({ method: 'MOVE', path, handlers })
+  },
+
+  notify: (path, ...handlers) => {
+    routes.push({ method: 'NOTIFY', path, handlers })
+  },
+
+  options: (path, ...handlers) => {
+    routes.push({ method: 'OPTIONS', path, handlers })
+  },
+
+  patch: (path, ...handlers) => {
+    routes.push({ method: 'PATCH', path, handlers })
+
+    return router
+  },
+
+  post: (path, ...handlers) => {
+    routes.push({ method: 'POST', path, handlers })
+
+    return router
+  },
+
+  propfind: (path, ...handlers) => {
+    routes.push({ method: 'PROPFIND', path, handlers })
+  },
+
+  proppatch: (path, ...handlers) => {
+    routes.push({ method: 'PROPPATCH', path, handlers })
+  },
+
+  put: (path, ...handlers) => {
+    routes.push({ method: 'PUT', path, handlers })
+
+    return router
+  },
+
+  purge: (path, ...handlers) => {
+    routes.push({ method: 'PURGE', path, handlers })
+  },
+
+  rebind: (path, ...handlers) => {
+    routes.push({ method: 'REBIND', path, handlers })
+  },
+
+  report: (path, ...handlers) => {
+    routes.push({ method: 'REPORT', path, handlers })
+  },
+
+  search: (path, ...handlers) => {
+    routes.push({ method: 'SEARCH', path, handlers })
+  },
+
+  source: (path, ...handlers) => {
+    routes.push({ method: 'SOURCE', path, handlers })
+  },
+
+  subscribe: (path, ...handlers) => {
+    routes.push({ method: 'SUBSCRIBE', path, handlers })
+  },
+
+  trace: (path, ...handlers) => {
+    routes.push({ method: 'TRACE', path, handlers })
+  },
+
+  unbind: (path, ...handlers) => {
+    routes.push({ method: 'UNBIND', path, handlers })
+  },
+
+  unlink: (path, ...handlers) => {
+    routes.push({ method: 'UNLINK', path, handlers })
+  },
+
+  unlock: (path, ...handlers) => {
+    routes.push({ method: 'UNLOCK', path, handlers })
+  },
+
+  unsubscribe: (path, ...handlers) => {
+    routes.push({ method: 'UNSUBSCRIBE', path, handlers })
+  },
+
+  use: (method, path, ...handlers) => {
+    routes.push({ method, path, handlers })
+
+    return router
+  }
 }
 
-export default createRouter
+//   return router
+// }
+
+// export default createRouter
+export default router

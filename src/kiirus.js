@@ -1,6 +1,10 @@
-import application from './application.js'
+import { EventEmitter } from 'node:events'
+
+// import application from './application.js'
+import Application from './Application.js'
 import router from './router.js'
 import formData from './utils/decoders/formData.js'
+import mergeDescriptors from './utils/mergerDescriptors.js'
 
 const CONTENT_TYPE = {
   FORM_DATA: 'multipart/form-data',
@@ -9,9 +13,9 @@ const CONTENT_TYPE = {
 }
 
 /**
- * Mocaccino object with methods for formData, json, and static.
- * @typedef {Object} Mocaccino
- * @property {() => import('./router').Router} Router - Create a router object.
+ * Kiirus object with methods for formData, json, and static.
+ * @typedef {Object} Kiirus
+ * @property {() => import('./router.js').Router} Router - Create a router object.
  * @property {(options?: object) => import('./router.js').Middleware} formData - Create a middleware that parses Form-Data bodies.
  * @property {(options?: object) => import('./router.js').Middleware} json - Create a middleware that parses JSON bodies.
  * @property {(options?: object) => import('./router.js').Middleware} raw - Create a middleware that parses incoming request payloads into a Buffer.
@@ -22,13 +26,74 @@ const CONTENT_TYPE = {
  */
 
 /**
- * Function to create a Mocaccino object.
- * @returns {import('./application.js').Application} The created Mocaccino object.
+ * Function to create a Kiirus object.
+ * @returns {import('./application-old.js').Application} The created Kiirus object.
  */
-const mocaccino = () => {
-  return {
-    ...application()
+const kiirus = () => {
+  // return {
+  //   ...application()
+  // }
+
+  // const app = () => {}
+
+  // return app
+
+  // const proto = application()
+
+  const proto = new Application()
+
+  const app = (req, res, next) => {
+    const fetchResponse = app.handleRequest(req, res, next)
+
+    // Set the headers and status code for the Node.js HTTP response
+    res.statusCode = fetchResponse.status
+
+    for (const [key, value] of fetchResponse.headers.entries()) {
+      res.setHeader(key, value)
+    }
+
+    // res.writeHead(statusCode, headers)
+
+    if (!fetchResponse.body) {
+      return res.end()
+    }
+
+    fetchResponse.body().then(async (buffer) => {
+      res.write(buffer)
+      res.end()
+    })
   }
+
+  mergeDescriptors(app, EventEmitter.prototype, false)
+  // mergeDescriptors(app, Object.getPrototypeOf(proto), false)
+  // mergeDescriptors(app, proto, false)
+  Object.setPrototypeOf(app, proto)
+
+  return app
+
+  // The inner function is necessary to manage usage with http native module
+  // and testing
+  // return Object.setPrototypeOf((req, res, next) => {
+  //   const fetchResponse = app.handleRequest(req, res, next)
+
+  //   // Set the headers and status code for the Node.js HTTP response
+  //   res.statusCode = fetchResponse.status
+
+  //   for (const [key, value] of fetchResponse.headers.entries()) {
+  //     res.setHeader(key, value)
+  //   }
+
+  //   // res.writeHead(statusCode, headers)
+
+  //   if (!fetchResponse.body) {
+  //     return res.end()
+  //   }
+
+  //   fetchResponse.body().then(async (buffer) => {
+  //     res.write(buffer)
+  //     res.end()
+  //   })
+  // }, app)
 }
 
 /**
@@ -37,7 +102,7 @@ const mocaccino = () => {
  * @param {object} [options] - Options for JSON parsing middleware.
  * @returns {import('./router.js').Middleware} JSON parsing middleware.
  */
-mocaccino.formData = () => {
+kiirus.formData = () => {
   return (req, res, next) => {
     // Check if there is data in the request body based on the Content-Length header
     const contentLength = (req.headers['content-length'] ?? '0') | 0
@@ -69,7 +134,7 @@ mocaccino.formData = () => {
  * @param {object} [options] - Options for JSON parsing middleware.
  * @returns {import('./router.js').Middleware} JSON parsing middleware.
  */
-mocaccino.json = (options) => {
+kiirus.json = (options) => {
   return (req, res, next) => {
     // Check if there is data in the request body based on the Content-Length header
     const contentLength = (req.headers['content-length'] ?? '0') | 0
@@ -99,17 +164,18 @@ mocaccino.json = (options) => {
  * @param {object} [options] - Options for raw body parsing middleware.
  * @returns {import('./router.js').Middleware} Raw body parsing middleware.
  */
-mocaccino.raw = (options) => {
+kiirus.raw = (options) => {
   // Implementation here
 }
 
 /**
  * Create a router object.
  * @function
- * @returns {import('./router').Router} An Mocaccino router instance.
+ * @returns {import('./router.js').Router} An kiirus router instance.
  */
-mocaccino.Router = () => {
-  return router()
+kiirus.Router = () => {
+  // return router()
+  return router
 }
 
 /**
@@ -119,7 +185,7 @@ mocaccino.Router = () => {
  * @param {object} [options] - Options for static file serving middleware.
  * @returns {import('./router.js').Middleware} Static file serving middleware.
  */
-mocaccino.static = (root, options) => {
+kiirus.static = (root, options) => {
   // Implementation here
 }
 
@@ -129,12 +195,12 @@ mocaccino.static = (root, options) => {
  * @param {object} [options] - Options for text body parsing middleware.
  * @returns {import('./router.js').Middleware} Text body parsing middleware.
  */
-mocaccino.text = (options) => {
+kiirus.text = (options) => {
   // Implementation here
 }
 
 /**
- * Built-in middleware in Mocaccino.js. The main objective of this method is to
+ * Built-in middleware in kiirus.js. The main objective of this method is to
  * parse the incoming request with urlencoded payloads and is based upon the.
  *
  * This method returns the middleware that parses all the urlencoded bodies.
@@ -142,7 +208,7 @@ mocaccino.text = (options) => {
  * @param {object} [options]
  * @returns {import('./router.js').Middleware} x-www-form-urlencoded parsing middleware.
  */
-mocaccino.urlencoded = (options) => {
+kiirus.urlencoded = (options) => {
   return (req, res, next) => {
     // Check if there is data in the request body based on the Content-Length header
     const contentLength = (req.headers['content-length'] ?? '0') | 0
@@ -177,4 +243,4 @@ mocaccino.urlencoded = (options) => {
   }
 }
 
-export default mocaccino
+export default kiirus

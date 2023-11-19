@@ -1,18 +1,52 @@
 {
-  "name": "mocaccino",
-  "version": "1.0.0",
-  "description": "Fully compatible Express specification running with Bun",
-  "main": "mocaccino.js",
+  "name": "@kiirus/kiirus",
+  "version": "0.0.1",
   "type": "module",
+  "author": {
+    "name": "Álvaro José Agámez Licha",
+    "email": "alvaroagamez@outlook.com",
+    "url": "https://dev.to/aagamezl"
+  },
+  "main": "src/kiirus.js",
+  "devDependencies": {
+    "bun-types": "latest",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^8.0.3",
+    "standard": "^17.1.0",
+    "superagent": "^8.1.2",
+    "supertest": "^6.3.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "description": "Fully Express API-compliant replacement built for Bun",
   "files": [
     "src/**/*"
   ],
+  "keywords": [
+    "API",
+    "rest",
+    "server",
+    "express",
+    "framework",
+    "sinatra",
+    "web",
+    "http",
+    "rest",
+    "restful",
+    "router",
+    "app",
+    "api"
+  ],
+  "license": "MIT",
   "scripts": {
     "lint": "standard",
     "lint:fix": "standard --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "bun server.js",
-    "start:dev": "bun --hot server.js"
+    "start:dev": "bun --hot server.js",
+    "prepare": "husky install"
   },
   "standard": {
     "globals": [
@@ -20,23 +54,14 @@
     ],
     "ignore": [
       "examples"
+    ],
+    "includes": [
+      "test"
     ]
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "cookie-session": "^2.0.0",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "helmet": "^7.0.0",
-    "mime-db": "^1.52.0"
-  },
-  "devDependencies": {
-    "standard": "^17.1.0",
-    "bun-types": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
