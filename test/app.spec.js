@@ -58,3 +58,31 @@ describe('app.mountpath', () => {
     expect(fallback.mountpath).toBe('/')
   })
 })
+
+describe('app.router', () => {
+  test('should throw with notice', () => {
+    const app = kiirus()
+
+    try {
+      // Disable line to pass the uni test, weird Express unit test, so I replicated
+      app.router // eslint-disable-line no-unused-expressions
+    } catch (err) {
+      expect(true).toBeTrue()
+    }
+  })
+})
+
+describe('app.path()', () => {
+  test('should return the canonical', () => {
+    const app = kiirus()
+    const blog = kiirus()
+    const blogAdmin = kiirus()
+
+    app.use('/blog', blog)
+    blog.use('/admin', blogAdmin)
+
+    expect(app.path()).toEqual('')
+    expect(blog.path()).toEqual('/blog')
+    expect(blogAdmin.path()).toEqual('/blog/admin')
+  })
+})

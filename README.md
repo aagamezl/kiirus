@@ -31,6 +31,7 @@ This library tries to have no dependencies or as few as possible.
 ### Properties
 - [ ] `app.locals`
 - [X] `app.mountpath`
+- [ ] `app.router` - Express 5.x
 
 ### Events
 - [X] `app.mount`
@@ -61,6 +62,7 @@ This library tries to have no dependencies or as few as possible.
 - [X] `app.options`
 - [ ] `app.param()`
 - [X] `app.patch`
+- [X] `app.path()`
 - [X] `app.post`
 - [X] `app.propfind`
 - [X] `app.proppatch`

@@ -2,7 +2,7 @@ import { EventEmitter } from 'node:events'
 
 // import application from './application.js'
 import Application from './Application.js'
-import router from './router.js'
+import Router from './Router.js'
 import formData from './utils/decoders/formData.js'
 import mergeDescriptors from './utils/mergerDescriptors.js'
 
@@ -15,19 +15,19 @@ const CONTENT_TYPE = {
 /**
  * Kiirus object with methods for formData, json, and static.
  * @typedef {Object} Kiirus
- * @property {() => import('./router.js').Router} Router - Create a router object.
- * @property {(options?: object) => import('./router.js').Middleware} formData - Create a middleware that parses Form-Data bodies.
- * @property {(options?: object) => import('./router.js').Middleware} json - Create a middleware that parses JSON bodies.
- * @property {(options?: object) => import('./router.js').Middleware} raw - Create a middleware that parses incoming request payloads into a Buffer.
- * @property {(root: string, options?: object) => import('./router.js').Middleware} static - Create a middleware to serve static files.
- * @property {(options?: object) => import('./router.js').Middleware} text - Create a middleware that parses text bodies.
- * @property {(options?: object) => import('./router.js').Middleware} urlencoded - Create a middleware that parses x-www-form-urlencoded bodies.
+ * @property {() => import('./Router.js').Router} Router - Create a router object.
+ * @property {(options?: object) => import('./Router.js').Middleware} formData - Create a middleware that parses Form-Data bodies.
+ * @property {(options?: object) => import('./Router.js').Middleware} json - Create a middleware that parses JSON bodies.
+ * @property {(options?: object) => import('./Router.js').Middleware} raw - Create a middleware that parses incoming request payloads into a Buffer.
+ * @property {(root: string, options?: object) => import('./Router.js').Middleware} static - Create a middleware to serve static files.
+ * @property {(options?: object) => import('./Router.js').Middleware} text - Create a middleware that parses text bodies.
+ * @property {(options?: object) => import('./Router.js').Middleware} urlencoded - Create a middleware that parses x-www-form-urlencoded bodies.
 
  */
 
 /**
  * Function to create a Kiirus object.
- * @returns {import('./application-old.js').Application} The created Kiirus object.
+ * @returns {Application} The created Kiirus object.
  */
 const kiirus = () => {
   // return {
@@ -65,8 +65,10 @@ const kiirus = () => {
   }
 
   mergeDescriptors(app, EventEmitter.prototype, false)
-  // mergeDescriptors(app, Object.getPrototypeOf(proto), false)
+  mergeDescriptors(app, Object.getPrototypeOf(proto), false)
   // mergeDescriptors(app, proto, false)
+  // mergeDescriptors(app, proto, false)
+  // Object.setPrototypeOf(app, proto)
   Object.setPrototypeOf(app, proto)
 
   return app
@@ -100,7 +102,7 @@ const kiirus = () => {
  * Create a middleware that parses Form-Data bodies.
  * @function
  * @param {object} [options] - Options for JSON parsing middleware.
- * @returns {import('./router.js').Middleware} JSON parsing middleware.
+ * @returns {import('./Router.js').Middleware} JSON parsing middleware.
  */
 kiirus.formData = () => {
   return (req, res, next) => {
@@ -132,7 +134,7 @@ kiirus.formData = () => {
  * Create a middleware that parses JSON bodies.
  * @function
  * @param {object} [options] - Options for JSON parsing middleware.
- * @returns {import('./router.js').Middleware} JSON parsing middleware.
+ * @returns {import('./Router.js').Middleware} JSON parsing middleware.
  */
 kiirus.json = (options) => {
   return (req, res, next) => {
@@ -162,7 +164,7 @@ kiirus.json = (options) => {
  * Create a middleware that parses incoming request payloads into a Buffer
  * @function
  * @param {object} [options] - Options for raw body parsing middleware.
- * @returns {import('./router.js').Middleware} Raw body parsing middleware.
+ * @returns {import('./Router.js').Middleware} Raw body parsing middleware.
  */
 kiirus.raw = (options) => {
   // Implementation here
@@ -171,11 +173,12 @@ kiirus.raw = (options) => {
 /**
  * Create a router object.
  * @function
- * @returns {import('./router.js').Router} An kiirus router instance.
+ * @returns {import('./Router.js').Router} An kiirus router instance.
  */
 kiirus.Router = () => {
   // return router()
-  return router
+  // return router
+  return new Router()
 }
 
 /**
@@ -183,7 +186,7 @@ kiirus.Router = () => {
  * @function
  * @param {string} root - The root directory from which to serve static assets.
  * @param {object} [options] - Options for static file serving middleware.
- * @returns {import('./router.js').Middleware} Static file serving middleware.
+ * @returns {import('./Router.js').Middleware} Static file serving middleware.
  */
 kiirus.static = (root, options) => {
   // Implementation here
@@ -193,7 +196,7 @@ kiirus.static = (root, options) => {
  * Create a middleware that parses text bodies.
  * @function
  * @param {object} [options] - Options for text body parsing middleware.
- * @returns {import('./router.js').Middleware} Text body parsing middleware.
+ * @returns {import('./Router.js').Middleware} Text body parsing middleware.
  */
 kiirus.text = (options) => {
   // Implementation here
@@ -206,7 +209,7 @@ kiirus.text = (options) => {
  * This method returns the middleware that parses all the urlencoded bodies.
  *
  * @param {object} [options]
- * @returns {import('./router.js').Middleware} x-www-form-urlencoded parsing middleware.
+ * @returns {import('./Router.js').Middleware} x-www-form-urlencoded parsing middleware.
  */
 kiirus.urlencoded = (options) => {
   return (req, res, next) => {
