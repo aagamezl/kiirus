@@ -42,6 +42,8 @@ const kiirus = () => {
 
   const proto = new Application()
 
+  // This function is necessary to manage usage with http native module,
+  // including testing libraries
   const app = (req, res, next) => {
     const fetchResponse = app.handleRequest(req, res, next)
 
@@ -72,30 +74,6 @@ const kiirus = () => {
   Object.setPrototypeOf(app, proto)
 
   return app
-
-  // The inner function is necessary to manage usage with http native module
-  // and testing
-  // return Object.setPrototypeOf((req, res, next) => {
-  //   const fetchResponse = app.handleRequest(req, res, next)
-
-  //   // Set the headers and status code for the Node.js HTTP response
-  //   res.statusCode = fetchResponse.status
-
-  //   for (const [key, value] of fetchResponse.headers.entries()) {
-  //     res.setHeader(key, value)
-  //   }
-
-  //   // res.writeHead(statusCode, headers)
-
-  //   if (!fetchResponse.body) {
-  //     return res.end()
-  //   }
-
-  //   fetchResponse.body().then(async (buffer) => {
-  //     res.write(buffer)
-  //     res.end()
-  //   })
-  // }, app)
 }
 
 /**
@@ -137,26 +115,45 @@ kiirus.formData = () => {
  * @returns {import('./Router.js').Middleware} JSON parsing middleware.
  */
 kiirus.json = (options) => {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     // Check if there is data in the request body based on the Content-Length header
-    const contentLength = (req.headers['content-length'] ?? '0') | 0
-    const [contentType] = (req.headers['content-type'] ?? '').split(';')
+    // const contentLength = (req.headers['content-length'] ?? '0') | 0
+    // const [contentType] = (req.headers['content-type'] ?? '').split(';')
 
-    if (contentType === CONTENT_TYPE.JSON && contentLength > 0) {
-      const bodyBuffer = []
+    // if (contentType === CONTENT_TYPE.JSON && contentLength > 0) {
+    //   const bodyBuffer = []
 
-      req.on('data', (chunk) => {
-        bodyBuffer.push(chunk)
-      })
+    //   req.on('data', (chunk) => {
+    //     bodyBuffer.push(chunk)
+    //   })
 
-      req.on('end', () => {
-        req.body = JSON.parse(Buffer.concat(bodyBuffer).toString())
+    //   req.on('end', () => {
+    //     req.body = JSON.parse(Buffer.concat(bodyBuffer).toString())
 
-        next()
-      })
-    } else {
+    //     next()
+    //   })
+    // } else {
+    //   next()
+    // }
+
+    try {
+      /* const body =  */await req.json()
+      // console.log(body)
+      console.log('req.body: %o', req.body)
+      // req.body = body
+    } catch (error) {
+      console.log(error)
+    } finally {
       next()
     }
+
+    // req.json().then((data) => {
+    //   req.body = data
+    // }).catch((error) => {
+    //   console.log(error)
+    // }).finally(() => {
+    //   next()
+    // })
   }
 }
 
@@ -176,8 +173,6 @@ kiirus.raw = (options) => {
  * @returns {import('./Router.js').Router} An kiirus router instance.
  */
 kiirus.Router = () => {
-  // return router()
-  // return router
   return new Router()
 }
 
@@ -214,8 +209,10 @@ kiirus.text = (options) => {
 kiirus.urlencoded = (options) => {
   return (req, res, next) => {
     // Check if there is data in the request body based on the Content-Length header
-    const contentLength = (req.headers['content-length'] ?? '0') | 0
-    const [contentType] = (req.headers['content-type'] ?? '').split(';')
+    // const contentLength = (req.headers['content-length'] ?? '0') | 0
+    // const [contentType] = (req.headers['content-type'] ?? '').split(';')
+    const contentLength = (req.headers.get('content-length') ?? '0') | 0
+    const [contentType] = (req.headers.get('content-type') ?? '').split(';')
 
     if (contentType === CONTENT_TYPE.URL_ENCODED && contentLength > 0) {
       const bodyBuffer = []
@@ -227,15 +224,15 @@ kiirus.urlencoded = (options) => {
       req.on('end', () => {
         req.body = decodeURIComponent(Buffer.concat(bodyBuffer).toString())
           .split('&')
-          .reduce((formData, pair) => {
+          .reduce((params, pair) => {
             // if (options.extendex === true) {
 
             // }
 
             const [key, value] = pair.split('=')
-            formData[decodeURIComponent(key)] = decodeURIComponent(value)
+            params[decodeURIComponent(key)] = decodeURIComponent(value)
 
-            return formData
+            return params
           }, {})
 
         next()

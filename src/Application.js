@@ -1,3 +1,4 @@
+// import KiirusRequest from './Request.js'
 import Router from './Router.js'
 
 class Application {
@@ -292,7 +293,7 @@ class Application {
    * @param {http.IncomingMessage} request - The incoming HTTP request object.
    * @param {import('bun').Server} server - The HTTP response object to be sent back to the client.
    */
-  static handleRequest (request) {
+  static handleRequest (request, response) {
     let index = 0
 
     const next = () => {
@@ -304,7 +305,9 @@ class Application {
 
         // Check if the  mounted middleware match the path
         if (middleware.path.test(request.url)) {
-          return middleware.callback(request, Response, next)
+          return middleware.callback(request, response, next)
+          // return middleware.callback(request, Response, next)
+          // return middleware.callback(new KiirusRequest(request), Response, next)
         }
       }
     }
