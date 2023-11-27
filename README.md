@@ -13,7 +13,7 @@ This library tries to have no dependencies or as few as possible.
 ![GitHub issues](https://img.shields.io/github/issues-raw/aagamezl/kiirus)
 ![GitHub](https://img.shields.io/github/license/aagamezl/kiirus)
 
-## Compatibility with Express 4 API
+## Compatibility with Express 5 API
 
 ## Kiirus
 
@@ -22,7 +22,7 @@ This library tries to have no dependencies or as few as possible.
 - [ ] `kiirus.formdata([options])` - No `options` implemented yet. New middleware not avaible in Express.
 - [ ] `kiirus.json([options])` - No `options` implemented yet
 - [ ] `kiirus.raw([options])`
-- [X] `kiirus.Router()`
+- [X] `kiirus.Router([options])` - `mergeParams` option not implemented yet
 - [ ] `kiirus.static(root, [options])`
 - [ ] `kiirus.text()`
 - [ ] `kiirus.urlencoded([options])` - No `options` implemented yet
@@ -32,7 +32,7 @@ This library tries to have no dependencies or as few as possible.
 ### Properties
 - [ ] `app.locals`
 - [ ] `app.mountpath`
-- [ ] `app.router` - Express 5.x
+- [ ] `app.router`
 
 ### Events
 - [ ] `app.mount`

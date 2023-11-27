@@ -1,7 +1,17 @@
 import createRouteRegEx from './utils/createRouteRegEx.js'
 
+const defaultOptions = {
+  caseSensitive: false,
+  mergeParams: false,
+  strict: false
+}
+
 export default class Router {
-  constructor () {
+  #options
+
+  constructor (options) {
+    this.#options = { ...defaultOptions, ...options }
+
     this.middleware = []
     this.routes = []
   }
@@ -70,7 +80,7 @@ export default class Router {
   post (path, ...handlers) {
     this.routes.push({
       method: 'POST',
-      path: createRouteRegEx(path),
+      path: createRouteRegEx(path, this.#options),
       handlers
     })
 

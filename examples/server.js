@@ -1,10 +1,10 @@
 import kiirus from '../src/kiirus.js'
 
 const app = kiirus()
-const port = 3000
+const port = 3001
 
 // Create a router
-const router = kiirus.Router()
+const router = kiirus.Router({ strict: false })
 
 // Application-level middleware
 app.use((req, res, next) => {
@@ -17,14 +17,16 @@ const routeMiddleware = (req, res, next) => {
   return next()
 }
 
-router.get('/', routeMiddleware, (req, res) => {
-  // console.log(req.session)
-
-  return res.json({ path: '/' })
+router.get('/', (req, res) => {
+  return res.json({ path: '/', lib: 'kiirus' })
 })
 
-router.get('/users', routeMiddleware, (req, res) => {
-  return res.json({ path: '/users' })
+router.get('/users/', (req, res) => {
+  return res.json({ path: '/users/', lib: 'kiirus' })
+})
+
+router.get('/users', (req, res) => {
+  return res.json({ path: '/users', lib: 'kiirus' })
 })
 
 // Add the router to the app as application-level middleware

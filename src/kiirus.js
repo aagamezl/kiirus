@@ -9,8 +9,8 @@ const kiirus = () => new Application()
  * @function
  * @returns {Router} An kiirus router instance.
  */
-kiirus.Router = () => {
-  return new Router()
+kiirus.Router = (options = {}) => {
+  return new Router(options)
 }
 
 export default kiirus

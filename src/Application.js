@@ -50,7 +50,6 @@ export default class Application {
     const next = () => {
       currentIndex++
       if (currentIndex < this.middleware.length) {
-        // return this.middleware[currentIndex](req, res, next)
         return this.middleware[currentIndex](req, Response, next)
       } else {
         // If no more middleware, proceed to route handling
@@ -69,7 +68,7 @@ export default class Application {
 
   use (middleware) {
     if (middleware.handle) {
-      // use method is used with a router object like parameter
+      // Use method is used with a router object like parameter
       this.middleware.push(middleware.handle.bind(middleware))
     } else {
       this.middleware.push(middleware)
