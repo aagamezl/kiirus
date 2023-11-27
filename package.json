@@ -1,0 +1,63 @@
+{
+  "name": "@kiirus/kiirus",
+  "module": "src/kiirus.js",
+  "type": "module",
+  "description": "Fully Express API-compliant replacement built for Bun",
+  "files": [
+    "src/**/*"
+  ],
+  "author": {
+    "name": "Álvaro José Agámez Licha",
+    "email": "alvaroagamez@outlook.com",
+    "url": "https://dev.to/aagamezl"
+  },
+  "keywords": [
+    "rest",
+    "server",
+    "express",
+    "framework",
+    "sinatra",
+    "web",
+    "http",
+    "rest",
+    "restful",
+    "router",
+    "app",
+    "api",
+    "bun"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "bun-types": "latest",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^8.0.3",
+    "standard": "^17.1.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "scripts": {
+    "lint": "standard",
+    "lint:fix": "standard --fix",
+    "prepare": "husky install",
+    "start": "bun server.js",
+    "start:dev": "bun --hot server.js"
+  },
+  "standard": {
+    "globals": [
+      "Bun"
+    ],
+    "ignore": [
+      "examples"
+    ],
+    "includes": [
+      "test"
+    ]
+  }
+}
