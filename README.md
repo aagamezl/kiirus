@@ -38,50 +38,50 @@ This library tries to have no dependencies or as few as possible.
 - [ ] `app.mount`
 
 ### Methods
-- [ ] `app.acl`
-- [ ] `app.bind`
-- [ ] `app.checkout`
-- [ ] `app.connect`
-- [ ] `app.copy`
-- [ ] `app.delete`
-- [ ] `app.disable()`
-- [ ] `app.enable()`
-- [ ] `app.enabled()`
-- [ ] `app.engine()`
-- [ ] `app.get`
-- [ ] `app.head`
-- [ ] `app.link`
+- [X] `app.acl`
+- [X] `app.bind`
+- [X] `app.checkout`
+- [X] `app.connect`
+- [X] `app.copy`
+- [X] `app.delete`
+- [X] `app.disable()`
+- [X] `app.enable()`
+- [X] `app.enabled()`
+- [X] `app.engine()`
+- [X] `app.get`
+- [X] `app.head`
+- [X] `app.link`
 - [X] `app.listen()`
-- [ ] `app.lock`
-- [ ] `app.m-search`
-- [ ] `app.merge`
-- [ ] `app.mkactivity`
-- [ ] `app.mkcalendar`
-- [ ] `app.mkcol`
-- [ ] `app.move`
-- [ ] `app.notify`
-- [ ] `app.options`
+- [X] `app.lock`
+- [X] `app.msearch`
+- [X] `app.merge`
+- [X] `app.mkactivity`
+- [X] `app.mkcalendar`
+- [X] `app.mkcol`
+- [X] `app.move`
+- [X] `app.notify`
+- [X] `app.options`
 - [ ] `app.param()`
-- [ ] `app.patch`
-- [ ] `app.path()`
-- [ ] `app.post`
-- [ ] `app.propfind`
-- [ ] `app.proppatch`
-- [ ] `app.purge`
-- [ ] `app.put`
-- [ ] `app.rebind`
-- [ ] `app.render()`
-- [ ] `app.report`
+- [X] `app.patch`
+- [X] `app.path()`
+- [X] `app.post`
+- [X] `app.propfind`
+- [X] `app.proppatch`
+- [X] `app.purge`
+- [X] `app.put`
+- [X] `app.rebind`
+- [X] `app.render()`
+- [X] `app.report`
 - [ ] `app.route()`
-- [ ] `app.search`
+- [X] `app.search`
 - [ ] `app.set()`
-- [ ] `app.source`
-- [ ] `app.subscribe`
-- [ ] `app.trace`
-- [ ] `app.unbind`
-- [ ] `app.unlink`
-- [ ] `app.unlock`
-- [ ] `app.unsubscribe`
+- [X] `app.source`
+- [X] `app.subscribe`
+- [X] `app.trace`
+- [X] `app.unbind`
+- [X] `app.unlink`
+- [X] `app.unlock`
+- [X] `app.unsubscribe`
 - [X] `app.use()`
 
 ## Request
@@ -156,42 +156,42 @@ This library tries to have no dependencies or as few as possible.
 ## Methods
 
 - [ ] `router.all()`
-- [ ] `router.acl`
-- [ ] `router.bind`
-- [ ] `router.checkout`
-- [ ] `router.connect`
-- [ ] `router.copy`
-- [ ] `router.delete`
+- [X] `router.acl`
+- [X] `router.bind`
+- [X] `router.checkout`
+- [X] `router.connect`
+- [X] `router.copy`
+- [X] `router.delete`
 - [X] `router.get`
-- [ ] `router.head`
-- [ ] `router.link`
-- [ ] `router.lock`
-- [ ] `router.m-search`
-- [ ] `router.merge`
-- [ ] `router.mkactivity`
-- [ ] `router.mkcalendar`
-- [ ] `router.mkcol`
-- [ ] `router.move`
-- [ ] `router.notify`
-- [ ] `router.options`
+- [X] `router.head`
+- [X] `router.link`
+- [X] `router.lock`
+- [X] `router.msearch`
+- [X] `router.merge`
+- [X] `router.mkactivity`
+- [X] `router.mkcalendar`
+- [X] `router.mkcol`
+- [X] `router.move`
+- [X] `router.notify`
+- [X] `router.options`
 - [ ] `router.param()`
-- [ ] `router.patch`
+- [X] `router.patch`
 - [X] `router.post`
-- [ ] `router.propfind`
-- [ ] `router.proppatch`
-- [ ] `router.purge`
-- [ ] `router.put`
-- [ ] `router.rebind`
-- [ ] `router.report`
-- [ ] `router.route()`
-- [ ] `router.search`
+- [X] `router.propfind`
+- [X] `router.proppatch`
+- [X] `router.purge`
+- [X] `router.put`
+- [X] `router.rebind`
+- [X] `router.report`
+- [X] `router.route()`
+- [X] `router.search`
 - [ ] `router.source`
-- [ ] `router.subscribe`
-- [ ] `router.trace`
-- [ ] `router.unbind`
-- [ ] `router.unlink`
-- [ ] `router.unlock`
-- [ ] `router.unsubscribe`
+- [X] `router.subscribe`
+- [X] `router.trace`
+- [X] `router.unbind`
+- [X] `router.unlink`
+- [X] `router.unlock`
+- [X] `router.unsubscribe`
 - [ ] `router.use()`
 
 ## Error Handling

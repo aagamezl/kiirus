@@ -28,11 +28,14 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "bun-types": "latest",
+    "@types/node": "^20.10.1",
+    "@types/supertest": "^2.0.16",
+    "bun-types": "^1.0.14",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
     "husky": "^8.0.3",
-    "standard": "^17.1.0"
+    "standard": "^17.1.0",
+    "supertest": "^6.3.3"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -43,8 +46,10 @@
     }
   },
   "scripts": {
+    "build:types": "tsc -p tsconfig.build.types.json",
     "lint": "standard",
     "lint:fix": "standard --fix",
+    "lint:types": "tsc",
     "prepare": "husky install",
     "start": "bun server.js",
     "start:dev": "bun --hot server.js"
