@@ -1,0 +1,30 @@
+{
+  "name": "@kiirus/kiirus",
+  "module": "src/kiirus.js",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest",
+    "commitizen": "^4.3.0",
+    "husky": "^8.0.3",
+    "standard": "^17.1.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "lint": "standard",
+    "lint:fix": "standard --fix"
+  },
+  "standard": {
+    "globals": [
+      "Bun"
+    ],
+    "ignore": [
+      "examples"
+    ],
+    "includes": [
+      "test"
+    ]
+  }
+}
