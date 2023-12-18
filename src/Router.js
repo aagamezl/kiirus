@@ -1,14 +1,14 @@
-import { createRouteRegEx, getRequestPath } from './utils'
+import { createRouteRegEx } from './utils'
 
 /**
  * Default options for a specific functionality.
- * @typedef {Object} DefaultOptions
+ * @typedef {Object} Options
  * @property {boolean} [caseSensitive=false] - Determines whether the functionality is case-sensitive.
  * @property {boolean} [mergeParams=false] - Specifies whether parameters should be merged.
  * @property {boolean} [strict=false] - Indicates strict mode.
  */
 
-/** @type {DefaultOptions} */
+/** @type {Options} */
 const defaultOptions = {
   caseSensitive: false,
   mergeParams: false,
@@ -35,15 +35,15 @@ const defaultOptions = {
 export default class Router {
   #options
 
+  /** @type {Route[]} */
+  static routes = []
+
   /**
    * @constructor
-   * @param {DefaultOptions} options
+   * @param {Options} options
    */
   constructor (options = {}) {
     this.#options = { ...defaultOptions, ...options }
-
-    /** @type {Route[]} */
-    this.routes = []
   }
 
   /**
@@ -53,30 +53,53 @@ export default class Router {
    * @returns {Response | Promise<Response>}
    */
   handle (req, res) {
-    // Implement route handling
-    const route = this.routes.find(route => {
-      // return route.method === req.method && route.path.test(req.url.split(req.headers.get('host')).pop())
-      // return ((route.method === undefined) || (route.method === req.method)) && route.path.test(getRequestPath(req))
-      return ((route.method === undefined) || (route.method === req.method)) && route.pattern.matcher(getRequestPath(req))
+    // // Implement route handling
+    // const route = Router.routes.find(route => {
+    //   // return route.method === req.method && route.path.test(req.url.split(req.headers.get('host')).pop())
+    //   // return ((route.method === undefined) || (route.method === req.method)) && route.path.test(getRequestPath(req))
+    //   return ((route.method === undefined) || (route.method === req.method)) && route.pattern.matcher(getRequestPath(req))
+    // })
+
+    // console.log('route: %o', route)
+
+    // if (!route) {
+    //   return new Response(undefined, { statusText: 'Not Found', status: 404 })
+    // }
+
+    // return this.#handleRouteHandlers(route.handlers, req, res)
+    // const requestPath = getRequestPath(req.raw)
+
+    const routes = Router.routes.filter(route => {
+      // const isMatch = route.path.test(getRequestPath(req))
+      // route.path.lastIndex = 0
+      // return ((route.method === undefined) || (route.method === req.raw.method)) && route.path.test(requestPath)
+      return ((route.method === undefined) || (route.method === req.raw.method)) && route.path.test(req.path)
     })
 
-    console.log('route: %o', route)
-
-    if (!route) {
+    if (routes.length === 0) {
       return new Response(undefined, { statusText: 'Not Found', status: 404 })
     }
 
-    return this.#handleRouteHandlers(route.handlers, req, res)
+    for (let index = 0; index < routes.length; index++) {
+      const route = routes[index]
+
+      if (route.method === undefined) {
+        // It's a middleware or router
+        this.#handleRouteHandlers(req, res, route.handlers)
+      } else {
+        return this.#handleRouteHandlers(req, res, route.handlers)
+      }
+    }
   }
 
   /**
    *
-   * @param {Handler[]} handlers
    * @param {Request} req
    * @param {Response} res
+   * @param {Handler[]} handlers
    * @returns {Response | Promise<Response>}
    */
-  #handleRouteHandlers (handlers, req, res) {
+  #handleRouteHandlers (req, res, handlers) {
     let currentIndex = 0
 
     // Implement next function for route handler execution
@@ -101,7 +124,7 @@ export default class Router {
    * @returns
    */
   acl (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'ACL',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -118,7 +141,7 @@ export default class Router {
    * @returns
    */
   bind (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'BIND',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -135,7 +158,7 @@ export default class Router {
    * @returns
    */
   checkout (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'CHECKOUT',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -152,7 +175,7 @@ export default class Router {
    * @returns
    */
   connect (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'CONNECT',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -169,7 +192,7 @@ export default class Router {
    * @returns
    */
   copy (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'COPY',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -186,7 +209,7 @@ export default class Router {
    * @returns
    */
   delete (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'DELETE',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -217,12 +240,13 @@ export default class Router {
    * });
    */
   get (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'GET',
-      pattern: {
-        path,
-        matcher: createRouteRegEx(path, this.#options)
-      },
+      // pattern: {
+      //   path,
+      //   matcher: createRouteRegEx(path, this.#options)
+      // },
+      path: createRouteRegEx(path, this.#options),
       handlers
     })
 
@@ -237,7 +261,7 @@ export default class Router {
    * @returns
    */
   head (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'HEAD',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -254,7 +278,7 @@ export default class Router {
    * @returns
    */
   link (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'LINK',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -271,7 +295,7 @@ export default class Router {
    * @returns
    */
   lock (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'LOCK',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -288,7 +312,7 @@ export default class Router {
    * @returns
    */
   msearch (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'M-SEARCH',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -305,7 +329,7 @@ export default class Router {
    * @returns
    */
   merge (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'MERGE',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -322,7 +346,7 @@ export default class Router {
    * @returns
    */
   mkactivity (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'MKACTIVITY',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -339,7 +363,7 @@ export default class Router {
    * @returns
    */
   mkcalendar (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'MKCALENDAR',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -356,7 +380,7 @@ export default class Router {
    * @returns
    */
   mkcol (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'MKCOL',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -373,7 +397,7 @@ export default class Router {
    * @returns
    */
   move (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'MOVE',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -390,7 +414,7 @@ export default class Router {
    * @returns
    */
   notify (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'NOTIFY',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -407,7 +431,7 @@ export default class Router {
    * @returns
    */
   options (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'OPTIONS',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -424,7 +448,7 @@ export default class Router {
    * @returns
    */
   patch (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'PATCH',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -441,7 +465,7 @@ export default class Router {
    * @returns
    */
   post (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'POST',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -458,7 +482,7 @@ export default class Router {
    * @returns
    */
   propfind (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'PROPFIND',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -475,7 +499,7 @@ export default class Router {
    * @returns
    */
   proppatch (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'PROPPATCH',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -492,7 +516,7 @@ export default class Router {
    * @returns
    */
   purge (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'PURGE',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -509,7 +533,7 @@ export default class Router {
    * @returns
    */
   put (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'PUT',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -526,7 +550,7 @@ export default class Router {
    * @returns
    */
   rebind (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'REBIND',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -543,7 +567,7 @@ export default class Router {
    * @returns
    */
   report (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'REPORT',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -560,7 +584,7 @@ export default class Router {
    * @returns
    */
   search (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'SEARCH',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -577,7 +601,7 @@ export default class Router {
    * @returns
    */
   source (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'SOURCE',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -594,7 +618,7 @@ export default class Router {
    * @returns
    */
   subscribe (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'SUBSCRIBE',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -611,7 +635,7 @@ export default class Router {
    * @returns
    */
   trace (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'TRACE',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -628,7 +652,7 @@ export default class Router {
    * @returns
    */
   unbind (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'UNBIND',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -645,7 +669,7 @@ export default class Router {
    * @returns
    */
   unlink (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'UNLINK',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -662,7 +686,7 @@ export default class Router {
    * @returns
    */
   unlock (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'UNLOCK',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -679,7 +703,7 @@ export default class Router {
    * @returns
    */
   unsubscribe (path, ...handlers) {
-    this.routes.push({
+    Router.routes.push({
       method: 'UNSUBSCRIBE',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -694,9 +718,7 @@ export default class Router {
    * @param  {...any} handlers
    */
   use (path, middleware) {
-    /*
-     * TODO: midleware params must accept more than 1 function too, like an array of functions
-     */
+    /* TODO: midleware params must accept more than 1 function, like an array of functions */
     // Check if the first argument is a path
     if (typeof path === 'string') {
       path = new RegExp(`${path.startsWith('/') ? path : `/${path}`}/?.*`, 'g')
@@ -705,7 +727,7 @@ export default class Router {
       path = /\/.*/g
     }
 
-    this.routes.push({
+    Router.routes.push({
       method: undefined,
       path,
       handlers: [middleware]

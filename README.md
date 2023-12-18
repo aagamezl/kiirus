@@ -3,11 +3,11 @@ Fully Express API compatible replacement built for Bun. The motivation is to hav
 
 This library tries to have no dependencies or as few as possible.
 
-![Node CI](https://github.com/aagamezl/kiirus/workflows/Node%20CI/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/aagamezl/kiirus/badge.svg?branch=master)](https://coveralls.io/github/aagamezl/kiirus?branch=master)
-![npm (scoped)](https://img.shields.io/npm/v/@aagamezl/kiirus)
-![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@aagamezl/kiirus?color=red)
-![npm](https://img.shields.io/npm/dt/@aagamezl/kiirus)
+![Node CI](https://github.com/aagamezl/kiirus/workflows/Bun%20CI/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/aagamezl/kiirus/badge.svg)](https://coveralls.io/github/aagamezl/kiirus)
+![npm (scoped)](https://img.shields.io/npm/v/@kiirus/kiirus)
+![npm bundle size (scoped)](https://img.shields.io/bundlephobia/minzip/@kiirus/kiirus?color=red)
+![npm](https://img.shields.io/npm/dt/@kiirus/kiirus)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 ![GitHub issues](https://img.shields.io/github/issues-raw/aagamezl/kiirus)
@@ -31,7 +31,7 @@ This library tries to have no dependencies or as few as possible.
 
 ### Properties
 - [ ] `app.locals`
-- [ ] `app.mountpath`
+- [X] `app.mountpath`
 - [ ] `app.router`
 
 ### Events
@@ -74,7 +74,7 @@ This library tries to have no dependencies or as few as possible.
 - [X] `app.report`
 - [ ] `app.route()`
 - [X] `app.search`
-- [ ] `app.set()`
+- [X] `app.set()`
 - [X] `app.source`
 - [X] `app.subscribe`
 - [X] `app.trace`
@@ -82,7 +82,7 @@ This library tries to have no dependencies or as few as possible.
 - [X] `app.unlink`
 - [X] `app.unlock`
 - [X] `app.unsubscribe`
-- [X] `app.use()`
+- [X] `app.use()` TODO: midleware params must accept more than 1 function
 
 ## Request
 
@@ -185,14 +185,14 @@ This library tries to have no dependencies or as few as possible.
 - [X] `router.report`
 - [X] `router.route()`
 - [X] `router.search`
-- [ ] `router.source`
+- [X] `router.source`
 - [X] `router.subscribe`
 - [X] `router.trace`
 - [X] `router.unbind`
 - [X] `router.unlink`
 - [X] `router.unlock`
 - [X] `router.unsubscribe`
-- [ ] `router.use()`
+- [X] `router.use()` TODO: midleware params must accept more than 1 function
 
 ## Error Handling
 

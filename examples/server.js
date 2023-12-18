@@ -1,10 +1,12 @@
 import kiirus from '../src/kiirus.js'
 
 const app = kiirus()
-const port = 3001
+const port = 3000
 
 // Create a router
 const router = kiirus.Router({ strict: false })
+
+app.use(kiirus.json())
 
 // Application-level middleware
 // app.use((req, res, next) => {
@@ -23,21 +25,30 @@ const router = kiirus.Router({ strict: false })
 //   return next()
 // })
 
-// router.get('/', routeMiddleware, (req, res) => {
-//   return res.json({ path: '/', lib: 'kiirus' })
-// })
-
-// router.get('/users/', (req, res) => {
-//   return res.json({ path: '/users/', lib: 'kiirus' })
-// })
-
 // router.use((req, res, next) => {
 //   console.log('Executing router application-level middleware')
 //   return next()
 // })
 
-router.get('/users', (req, res) => {
-  return res.json({ path: '/users', lib: 'kiirus' })
+// router.get('/', routeMiddleware, (req, res) => {
+//   return res.json({ path: '/', lib: 'kiirus' })
+// })
+
+router.get('/', (req, res) => {
+  return res.json({ path: '/', lib: 'kiirus' })
+})
+
+// router.get('/users/', (req, res) => {
+//   return res.json({ path: '/users/', lib: 'kiirus' })
+// })
+
+// router.get('/users', (req, res) => {
+//   return res.json({ path: '/users', lib: 'kiirus' })
+// })
+
+router.post('/users', (req, res) => {
+  return res.json(req.body)
+  // return res.json({ path: '/users', method: 'post', lib: 'kiirus' })
 })
 
 // Add the router to the app as application-level middleware

@@ -122,3 +122,21 @@ describe('in production', () => {
     expect(app.enabled('view cache')).toBeTrue()
   })
 })
+
+describe('without NODE_ENV', () => {
+  let env
+
+  beforeEach(() => {
+    env = process.env.NODE_ENV
+    Bun.env.NODE_ENV = ''
+  })
+
+  afterEach(() => {
+    Bun.env.NODE_ENV = env
+  })
+
+  test('should default to development', () => {
+    const app = kiirus()
+    expect(app.get('env')).toBe('development')
+  })
+})

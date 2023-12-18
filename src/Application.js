@@ -1,7 +1,17 @@
+import { serve } from 'bun'
 import { EventEmitter } from 'bun:events'
 
 import Router from './Router.js'
 import { getRequestPath } from './utils'
+import ClientRequest from './ClientRequest.js'
+
+/**
+ * Middleware Object
+ *
+ * @typedef {Object} Middleware
+ * @property {RegExp} path - The path for which the middleware should be applied.
+ * @property {function} callback - The middleware function to be executed.
+ */
 
 export default class Application extends EventEmitter {
   constructor () {
@@ -15,7 +25,7 @@ export default class Application extends EventEmitter {
      * Application local variables.
      * @type {object}
      * @name app.locals
-     * @memberOf mocaccino.Application
+     * @memberOf kiirus.Application
      */
     this.locals = Object.create(null)
 
@@ -23,10 +33,11 @@ export default class Application extends EventEmitter {
      * The app.mountpath property holds the path pattern at which a middleware function was mounted.
      * @type {string}
      * @name app.mountpath
-     * @memberOf mocaccino.Application
+     * @memberOf kiirus.Application
      */
     this.mountpath = '/'
 
+    /** @type {Middleware[]} */
     this.middlewares = []
 
     /** @type {Application} */
@@ -80,9 +91,9 @@ export default class Application extends EventEmitter {
 
     callback = callback ?? (() => { }) // Default callback is an empty function
 
-    callback()
+    setImmediate(callback)
 
-    Bun.serve({
+    const server = serve({
       port, // defaults to $BUN_PORT, $PORT, $NODE_PORT otherwise 3000
       hostname, // defaults to "0.0.0.0"
       fetch: this.handle.bind(this),
@@ -92,6 +103,10 @@ export default class Application extends EventEmitter {
       maxRequestBodySize,
       lowMemoryMode
     })
+
+    server.close = server.stop
+
+    return server
   }
 
   /**
@@ -104,24 +119,29 @@ export default class Application extends EventEmitter {
   handle (req) {
     let currentIndex = 0
     const path = getRequestPath(req)
+    const request = new ClientRequest(req, path)
 
     // Implement next function for middleware execution
-    const next = () => {
+    const next = (req, res) => {
       currentIndex++
 
       if (currentIndex < this.middlewares.length) {
         const middleware = this.middlewares[currentIndex]
 
         if (middleware.path.test(path)) {
-          return middleware.callback(req, Response, next)
+          // return middleware.callback(req, Response, next)
+          // return middleware.callback(request, Response, next) // 2023-12-17
+          return middleware.callback(req, res, next)
         }
 
-        return next()
+        return next(req, res)
 
         // return this.middlewares[currentIndex](req, Response, next)
       } else {
         // If no more middleware, proceed to route handling
-        return this.router.handle(req, Response)
+        // return this.router.handle(req, Response)
+        // return this.router.handle(request, Response) // 2023-12-17
+        return this.router.handle(req, res)
       }
     }
 
@@ -130,17 +150,21 @@ export default class Application extends EventEmitter {
       // return this.middlewares[0](req, res, next)
       for (let index = 0; index < this.middlewares.length; index++) {
         const middleware = this.middlewares[index]
+        middleware.path.lastIndex = 0 // to avoid missing the next test
 
         if (middleware.path.test(path)) {
-          return middleware.callback(req, Response, next)
+          // return middleware.callback(req, Response, next)
+          return middleware.callback(request, Response, next)
         }
       }
 
       // If no middleware match the request, directly handle routes
-      return this.router.handle(req, Response)
+      // return this.router.handle(req, Response)
+      return this.router.handle(request, Response)
     } else {
       // If no middleware, directly handle routes
-      return this.router.handle(req, Response)
+      // return this.router.handle(req, Response)
+      return this.router.handle(request, Response)
     }
   }
 
@@ -228,7 +252,7 @@ export default class Application extends EventEmitter {
    * Add a new route for handling HTTP GET requests.
    *
    * @param {string} path - The route path.
-   * @param {...Function} handlers - One or more middleware functions to handle the route.
+   * @param {Function[]} [handlers] - One or more middleware functions to handle the route.
    * @returns {void}
    * @throws {TypeError} Will throw an error if the path is not a string or if any of the handlers are not functions.
    *
@@ -246,6 +270,11 @@ export default class Application extends EventEmitter {
    * });
    */
   get (path, ...handlers) {
+    if (handlers.length === 0) {
+      // app.get(setting)
+      return this.set(path)
+    }
+
     return this.router.get(path, ...handlers)
   }
 
@@ -382,6 +411,15 @@ export default class Application extends EventEmitter {
   }
 
   /**
+   * Register middleware to be executed before route handling.
+   * @param {string | string[]} name - The middleware function to be executed.
+   * @param {Function} callback - The middleware function to be executed.
+   */
+  param (name, callback) {
+    // Implementation here
+  }
+
+  /**
    * Add a new route for handling HTTP post requests.
    *
    * @param {string} path
@@ -480,6 +518,12 @@ export default class Application extends EventEmitter {
     return this.router.search(path, ...handlers)
   }
 
+  /**
+   *
+   * @param {string | Object.<string, any>} setting
+   * @param {any} [val]
+   * @returns {Application}
+   */
   set (setting, val) {
     if (val === undefined) {
       // app.get(setting)
@@ -499,6 +543,7 @@ export default class Application extends EventEmitter {
     // set value
     this.settings[setting] = val
 
+    // TODO: Implement this code
     // trigger matched settings
     // switch (setting) {
     //   case 'etag':
@@ -605,6 +650,7 @@ export default class Application extends EventEmitter {
    * @param {Function|Application|Router} [middleware]
    */
   use (path, middleware) {
+    /* TODO: midleware params must accept more than 1 function, like an array of functions */
     let mountpath
 
     // Check if the first argument is a path
@@ -624,7 +670,6 @@ export default class Application extends EventEmitter {
     // Check if the middleware is a simple middleware or an app or router (have
     // a handle function)
     if (typeof middleware === 'function') {
-      // TODO: create the midleware JSDoc typedef
       this.middlewares.push({
         path,
         callback: middleware
