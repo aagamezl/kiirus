@@ -5,6 +5,11 @@ import Router from './Router.js'
 import { mergeDescriptors } from './utils'
 
 /**
+ * Default options for a specific functionality.
+ * @typedef {Application & import('node:events').EventEmitter} KiirusApplication
+ */
+
+/**
  *
  * @returns {KiirusApplication}
  */
@@ -28,7 +33,7 @@ const kiirus = () => {
 }
 
 /**
- * Create a router object.
+ * Create a new router object.
  * @function
  * @param {import('./Router.js').DefaultOptions} options
  * @returns {Router} An kiirus router instance.
@@ -50,6 +55,8 @@ kiirus.json = (options) => {
  * @param {Function} next
  */
   return async (req, res, next) => {
+    console.log('kiirus.json() called')
+
     req.body = await req.raw.json()
 
     return next(req, res)

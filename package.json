@@ -5,6 +5,7 @@
   "devDependencies": {
     "bun-types": "latest",
     "commitizen": "^4.3.0",
+    "express": "^4.19.2",
     "husky": "^8.0.3",
     "standard": "^17.1.0"
   },

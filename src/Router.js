@@ -26,22 +26,22 @@ const defaultOptions = {
 export default class Router {
   #options = {}
 
-  /** @type {Route[]} */
-  static stack = []
-
   /**
    * @constructor
    * @param {Options} options
    */
   constructor (options = {}) {
     /** @type {Middleware[]} */
-    this.middlewares = []
+    // this.middlewares = []
 
     this.#options = { ...defaultOptions, ...options }
+
+    /** @type {Route[]} */
+    this.stack = []
   }
 
   get (path, ...handlers) {
-    Router.stack.push({
+    this.stack.push({
       method: 'GET',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -59,7 +59,30 @@ export default class Router {
   handle (req, res) {
     console.info('Router.handle() called')
 
-    const routes = Router.stack.filter(route => {
+    const routes = this.stack.filter(route => {
+      return ((route.method === undefined) || (route.method === req.raw.method)) && route.path.test(req.path)
+    })
+
+    if (routes.length === 0) {
+      return new Response(undefined, { statusText: 'Not Found', status: 404 })
+    }
+
+    for (let index = 0; index < routes.length; index++) {
+      const route = routes[index]
+
+      if (route.method === undefined) {
+        // It's a middleware or router
+        this.#handleRouteHandlers(req, res, route.handlers)
+      } else {
+        return this.#handleRouteHandlers(req, res, route.handlers)
+      }
+    }
+  }
+
+  handle2 (stack, req, res) {
+    console.info('Router.handle() called')
+
+    const routes = stack.filter(route => {
       return ((route.method === undefined) || (route.method === req.raw.method)) && route.path.test(req.path)
     })
 
@@ -99,12 +122,17 @@ export default class Router {
 
     // Start the route handler execution
     if (handlers.length > 0) {
-      return handlers[0](req, res, next)
+      if (handlers[0].name !== 'bound handle') {
+        return handlers[0](req, res, next)
+      }
+
+      next()
+      // return handlers[0](req, res, next)
     }
   }
 
   post (path, ...handlers) {
-    Router.stack.push({
+    this.stack.push({
       method: 'POST',
       path: createRouteRegEx(path, this.#options),
       handlers
@@ -124,6 +152,13 @@ export default class Router {
       path: new RegExp(`${path.startsWith('/') ? path : `/${path}`}/?.*`, 'g'),
       callback: middleware
     })
+
+    // this.stack.push({
+    //   // method: '*',
+    //   method: undefined,
+    //   path: new RegExp(`${path.startsWith('/') ? path : `/${path}`}/?.*`, 'g'),
+    //   handlers
+    // })
 
     return this
   }
