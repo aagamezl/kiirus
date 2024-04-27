@@ -69,22 +69,18 @@ import kiirus from './kiirus.js'
 // }
 
 // Example middleware functions
-const loggerMiddleware = (req, res, next) => {
-  console.log(`${req.method} ${req.url}`)
-  next()
-}
+// const loggerMiddleware = (req, res, next) => {
+//   console.log(`${req.method} ${req.url}`)
+//   next()
+// }
 
-const authMiddleware = (req, res, next) => {
-  req.user = { id: 1, name: 'John Doe' }
-  next()
-}
+// const authMiddleware = (req, res, next) => {
+//   req.user = { id: 1, name: 'John Doe' }
+//   next()
+// }
 
 // Create a new app
 const app = kiirus()
-
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
 
 // Create a new router
 // const router = createRouter()
@@ -106,8 +102,8 @@ const router = kiirus.Router()
 // })
 
 // // Use the middleware functions
-app.use(loggerMiddleware)
-app.use(authMiddleware)
+// app.use(loggerMiddleware)
+// app.use(authMiddleware)
 
 // a middleware function with no mount path. This code is executed for every request to the router
 router.use((req, res, next) => {
@@ -116,7 +112,11 @@ router.use((req, res, next) => {
 })
 
 // // Mount the router on the app
-app.use('/', router)
+app.use('/users', router)
+
+app.get('/users', (req, res) => {
+  res.send('Hello World!')
+})
 
 // Simulate a request
 const req = {

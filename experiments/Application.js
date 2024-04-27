@@ -71,12 +71,11 @@ export default class Application extends EventEmitter {
   handle (req, res, callback) {
     const finalhandler = (req, res, options) => {
       return {
-        // env: 'env',
-        // onerror: console.error(app)
+        env: 'env',
+        onerror: console.error(this)
       }
     }
 
-    // next()
     // final handler
     const done = callback || finalhandler
 
@@ -96,9 +95,8 @@ export default class Application extends EventEmitter {
     for (let index = 0; index < handlers.length; index++) {
       const middleware = handlers[index]
 
-      // non-express app
+      // non-kiirus app
       if (!middleware || !middleware.handle || !middleware.set) {
-        // return router.use(path, middleware)
         return this.router.use(path, middleware)
       }
 

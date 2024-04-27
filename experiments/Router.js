@@ -34,14 +34,7 @@ export default class Router {
       }
 
       const middleware = this.stack[index++]
-      // const route = middleware.route
 
-      // if (!route) {
-      //   // process non-route handlers normally
-      //   return
-      // }
-
-      // console.log(middleware)
       middleware.handle(req, res, next)
     }
 
@@ -66,7 +59,6 @@ export default class Router {
     for (let index = 0; index < handlers.length; index++) {
       const handle = handlers[index] instanceof Router ? handlers[index].handle.bind(handlers[index]) : handlers[index]
 
-      // routes.push({ path, handle })
       this.stack.push({ path, handle })
     }
   }
